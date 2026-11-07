@@ -143,7 +143,20 @@ public final class QuestServer implements QuestEngine.Listener {
     private void sendTeamAndProgress(PlayerView p) {
         TeamManager.Team t = engine.teams().teamOf(p.uuid());
         net.send(p.uuid(), new Wire.Out(Msg.S_TEAM).str(teamJson(p.uuid(), t)).done());
-        net.send(p.uuid(), new Wire.Out(Msg.S_PROGRESS).str(t.id).str(Json.compact(engine.progress().teamJson(t.id))).done());
+        net.send(p.uuid(), new Wire.Out(Msg.S_PROGRESS).str(t.id).str(progressJson(t.id)).done());
+    }
+
+    /** A team's progress plus {@code $locked}: the quests the server says are closed (dependencies, time and script locks). */
+    private String progressJson(String teamId) {
+        JsonObject o = engine.progress().teamJson(teamId);
+        JsonArray locked = new JsonArray();
+        for (Quest q : engine.book().allQuests()) {
+            if (!engine.isComplete(teamId, q.id) && !engine.isUnlocked(teamId, q)) {
+                locked.add(q.id);
+            }
+        }
+        o.add("$locked", locked);
+        return Json.compact(o);
     }
 
     private String teamJson(UUID viewer, TeamManager.Team t) {
@@ -178,6 +191,12 @@ public final class QuestServer implements QuestEngine.Listener {
                 engine.poll(p);
             }
         }
+        if (gameTime % 600 == 0) {
+            // Time locks open without any progress change, so refresh the lock list now and then.
+            for (PlayerView p : host.players()) {
+                engine.markTeamDirty(engine.teams().teamOf(p.uuid()).id);
+            }
+        }
         if (gameTime % SYNC_TICKS == 0) {
             flush();
         }
@@ -204,7 +223,7 @@ public final class QuestServer implements QuestEngine.Listener {
             if (t == null) {
                 continue;
             }
-            String json = Json.compact(engine.progress().teamJson(teamId));
+            String json = progressJson(teamId);
             for (UUID m : t.members) {
                 if (host.online(m) != null) {
                     net.send(m, new Wire.Out(Msg.S_PROGRESS).str(teamId).str(json).done());
