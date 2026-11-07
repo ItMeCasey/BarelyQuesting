@@ -1,0 +1,85 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0.47,6.2)'
+}
+
+base.archivesName = "${mod_id}-forge-mc${minecraft_version}"
+version = mod_version
+group = mod_group
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+// Shared code lives in ../common and is compiled into this loader layer and the combined jar.
+sourceSets {
+    main {
+        java.srcDir '../version-1.21.1/src/main/java'
+        java.srcDir '../common/src/main/java'
+        if (project.hasProperty('devTools')) { java.srcDir '../common/src/dev/java'; java.srcDir '../version-1.21.1/src/dev/java' }  // dev tools (self test, tour), never in releases
+        resources.srcDir '../common/src/main/resources'
+    }
+}
+
+// Dev runs find the mod in one directory, so keep resources next to the compiled classes.
+sourceSets.main.output.resourcesDir = sourceSets.main.java.destinationDirectory.get().asFile
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    reobf = false
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'eventbus.api.strictRuntimeChecks', 'true'
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+        client {}
+        server {
+            args '--nogui'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'Forge'
+        url = 'https://maven.minecraftforge.net'
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+}
+
+// Fills in mods.toml from gradle.properties, the same way the NeoForge module fills in neoforge.mods.toml.
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+        minecraft_version: minecraft_version, forge_version: forge_version,
+        mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+        mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+
+// Unit tests for the shared logic in ../common. They need no running game.
+sourceSets.test.java.srcDir '../common/src/test/java'
+repositories { mavenCentral() }
+dependencies {
+    testImplementation platform("org.junit:junit-bom:5.11.4")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "com.google.code.gson:gson:2.11.0"
+}
+tasks.withType(Test).configureEach { useJUnitPlatform() }

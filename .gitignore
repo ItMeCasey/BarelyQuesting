@@ -1,0 +1,16 @@
+.gradle/
+build/
+out/
+run/
+run-data/
+runs/
+logs/
+crash-reports/
+release/
+dist/
+.idea/
+*.iml
+.vscode/
+*.log
+scratch-*
+__pycache__/
