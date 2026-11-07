@@ -80,6 +80,9 @@ final class GraphView {
                     minY = Math.min(minY, q.y);
                     maxY = Math.max(maxY, q.y);
                 }
+                double needW = (maxX - minX) * CELL + book.ui.th.nodeSize + 24;
+                double needH = (maxY - minY) * CELL + book.ui.th.nodeSize + 24;
+                v[2] = Math.max(0.5, Math.min(1.0, Math.min(vw / needW, vh / needH)));
                 v[0] = -(minX + maxX) / 2.0 * CELL * v[2];
                 v[1] = -(minY + maxY) / 2.0 * CELL * v[2];
             }

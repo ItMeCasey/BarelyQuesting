@@ -53,7 +53,7 @@ save(frame(16, 4, (255, 245, 214, 255), (255, 252, 236, 255), EDGE), "button_hov
 save(frame(16, 4, PAPER_DARK, PAPER, EDGE), "button_off")
 save(frame(16, 4, PAPER, PAPER_LIGHT, EDGE), "tab")
 save(frame(16, 4, (250, 226, 150, 255), (255, 244, 200, 255), EDGE), "tab_selected")
-save(frame(16, 3, (120, 96, 58, 255), EDGE_DARK, (150, 120, 76, 255)), "slot")
+save(frame(16, 3, (190, 166, 116, 255), EDGE_DARK, (214, 192, 142, 255)), "slot")
 save(frame(16, 3, (96, 72, 40, 255), EDGE_DARK, (120, 94, 56, 255)), "bar")
 save(frame(16, 3, (122, 168, 70, 255), (170, 210, 110, 255), (80, 120, 40, 255)), "bar_fill")
 
@@ -90,7 +90,7 @@ parchment = {
         "panel": "#e8d5a8", "panel_edge": "#8b6b3d", "panel_inset": "#cdb582", "header": "#d8c08a",
         "text": "#3b2a1a", "text_muted": "#7a6444", "title": "#5c2e0e", "accent": "#9c5a14",
         "button": "#f4e8c4", "button_hover": "#fff5d6", "button_off": "#cdb582",
-        "tab": "#e8d5a8", "tab_selected": "#fae296", "slot": "#785a32", "bar": "#604828", "bar_fill": "#7aa846",
+        "tab": "#e8d5a8", "tab_selected": "#fae296", "slot": "#bea674", "bar": "#604828", "bar_fill": "#7aa846",
         "line": "#7a6444", "line_done": "#4a8046",
         "node_locked": "#968c7c", "node_available": "#6e96c4", "node_progress": "#e2b23e", "node_complete": "#76b052", "node_claimed": "#4a8046",
         "node_selected": "#3b2a1a", "danger": "#a82a1c", "success": "#2e7a30",

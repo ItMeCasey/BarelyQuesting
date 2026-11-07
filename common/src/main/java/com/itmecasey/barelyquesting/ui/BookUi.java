@@ -152,7 +152,7 @@ public final class BookUi {
         }
         Chapter chapter = chapter();
         boolean showPanel = selectedQuest() != null;
-        panelW = showPanel ? Math.min(210, Math.max(150, bw / 3)) : 0;
+        panelW = showPanel ? Math.min(230, Math.max(150, bw * 2 / 5)) : 0;
         mainX = bx + SIDEBAR;
         mainY = by + HEADER;
         mainW = bw - SIDEBAR - panelW;

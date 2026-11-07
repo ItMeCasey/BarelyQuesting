@@ -78,6 +78,9 @@ public final class Json {
 
     public static boolean bool(JsonObject o, String key, boolean def) {
         JsonElement e = o == null ? null : o.get(key);
+        if (e != null && e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber()) {
+            return e.getAsInt() != 0; // NBT-style JSON writes booleans as 0 and 1
+        }
         return e != null && e.isJsonPrimitive() ? e.getAsBoolean() : def;
     }
 

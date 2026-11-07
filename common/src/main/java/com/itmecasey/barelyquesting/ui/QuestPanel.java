@@ -188,7 +188,7 @@ final class QuestPanel {
             tx = x + 22;
         }
         ui.checkbox(x + w - 12, y + 2, 10, done, th.color("success"));
-        String text = type == null ? t.type : type.describe(t);
+        String text = TaskText.task(g, t);
         g.text(ui.fit(text, w - (tx - x) - 16, 0), tx, y + 1, th.color(done ? "success" : "text"), 0);
         if (need > 1) {
             ui.bar(tx, y + 11, w - (tx - x) - 4, 7, (double) have / need);
@@ -221,10 +221,7 @@ final class QuestPanel {
             itemClicks(icon, x, y, 18);
             tx = x + 22;
         }
-        String text = type == null ? r.type : type.describe(r);
-        if (QuestEngine.isTeamScope(r)) {
-            text += " (team)";
-        }
+        String text = TaskText.reward(g, r);
         g.text(ui.fit(text, w - (tx - x) - 4, 0), tx, y + 5, claimed ? th.color("text_muted") : th.color("text"), 0);
         int h = 20;
         if (s == Status.COMPLETE && !claimed) {
@@ -304,7 +301,7 @@ final class QuestPanel {
         y += 10;
         field("title", q.title, false, x, y, w, 16, v -> edit(c -> c.title = v));
         y += 20;
-        g.text("Description (**bold** *italic* &c colors)", x, y, th.color("text_muted"), 0);
+        g.text("Description", x, y, th.color("text_muted"), 0);
         y += 10;
         field("desc", q.description, true, x, y, w, 62, v -> edit(c -> c.description = v));
         y += 66;

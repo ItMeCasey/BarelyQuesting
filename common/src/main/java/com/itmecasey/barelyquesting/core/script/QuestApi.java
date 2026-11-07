@@ -17,8 +17,11 @@ import com.itmecasey.barelyquesting.core.task.TaskType;
 import com.itmecasey.barelyquesting.core.task.TaskTypes;
 import com.itmecasey.barelyquesting.core.team.TeamManager;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.ToLongFunction;
 
 /**
  * The one scripting surface. The ModJS and KubeJS bridges expose an instance of this class to scripts as {@code BarelyQuesting}, and
@@ -29,9 +32,34 @@ import java.util.function.Consumer;
 public final class QuestApi {
     private static volatile QuestServer server;
 
-    /** Used by the loader once the server is running. */
+    private static final java.util.List<Runnable> PENDING = new java.util.ArrayList<>();
+
+    /** Used by the loader once the server is running. Work queued by startup scripts runs now. */
     public static void attach(QuestServer s) {
         server = s;
+        List<Runnable> work;
+        synchronized (PENDING) {
+            work = new java.util.ArrayList<>(PENDING);
+            PENDING.clear();
+        }
+        for (Runnable r : work) {
+            try {
+                r.run();
+            } catch (RuntimeException e) {
+                java.util.logging.Logger.getLogger("barelyquesting").warning("A queued script change failed: " + e);
+            }
+        }
+    }
+
+    /** Runs now when the server is up, otherwise when it starts (so startup scripts can create quests). */
+    private void whenReady(Runnable r) {
+        if (server != null) {
+            r.run();
+        } else {
+            synchronized (PENDING) {
+                PENDING.add(r);
+            }
+        }
     }
 
     public static void detach() {
@@ -58,14 +86,19 @@ public final class QuestApi {
 
     /** Adds a chapter (or updates its title and icon when the id exists). Returns the chapter id. */
     public String chapter(String id, String title, String icon) {
-        Chapter c = book().chapter(id);
-        Chapter n = new Chapter(id);
-        n.title = title;
-        n.icon = ItemSpec.of(icon == null || icon.isEmpty() ? "minecraft:book" : icon);
-        if (c != null) {
-            n.group = c.group;
-        }
-        require().applyEdit(null, EditOps.putChapter(n, null), null);
+        whenReady(() -> {
+            Chapter c = book().chapter(id);
+            Chapter n = new Chapter(id);
+            n.title = title;
+            n.icon = ItemSpec.of(icon == null || icon.isEmpty() ? "minecraft:book" : icon);
+            if (c != null) {
+                n.group = c.group;
+                if (title == null || title.isEmpty()) {
+                    n.title = c.title;
+                }
+            }
+            require().applyEdit(null, EditOps.putChapter(n, null), null);
+        });
         return id;
     }
 
@@ -76,12 +109,14 @@ public final class QuestApi {
     public String quest(String chapterId, String questJson) {
         JsonObject o = Json.parseObject(questJson);
         if (Json.str(o, "id", "").isEmpty()) {
-            o.addProperty("id", book().newQuestId());
+            o.addProperty("id", com.itmecasey.barelyquesting.core.model.Book.randomId(8));
         }
         Quest q = Quest.fromJson(o);
-        if (!require().applyEdit(null, EditOps.putQuest(chapterId, q, null), null)) {
-            throw new IllegalArgumentException("Could not add quest to chapter " + chapterId);
-        }
+        whenReady(() -> {
+            if (!require().applyEdit(null, EditOps.putQuest(chapterId, q, null), null)) {
+                throw new IllegalArgumentException("Could not add quest to chapter " + chapterId);
+            }
+        });
         return q.id;
     }
 
@@ -151,6 +186,53 @@ public final class QuestApi {
 
     public void scriptedLock(String name, ScriptRegistry.LockCallback callback) {
         ScriptRegistry.lock(name, callback);
+    }
+
+    // ---- script-friendly registrations (one functional interface each, so JavaScript functions convert cleanly) ----
+
+    /** A scripted task: {@code {"type": "scripted", "name": name}}. Your function returns the progress to set (higher than now to advance). */
+    public void registerTask(String name, ToLongFunction<ScriptContexts.TaskContext> poll) {
+        ScriptRegistry.task(name, new ScriptRegistry.TaskCallback() {
+            @Override
+            public long poll(Def task, PlayerView player, long current) {
+                return poll.applyAsLong(new ScriptContexts.TaskContext(player, task, current));
+            }
+        });
+    }
+
+    /** A scripted task driven by events (kill, craft, pickup, advancement): your function returns the progress to add. */
+    public void registerTaskEvents(String name, ToLongFunction<ScriptContexts.EventContext> onEvent) {
+        ScriptRegistry.task(name, new ScriptRegistry.TaskCallback() {
+            @Override
+            public long onEvent(Def task, TaskEvent event) {
+                return onEvent.applyAsLong(new ScriptContexts.EventContext(event.player, task, event));
+            }
+        });
+    }
+
+    /** A scripted reward: {@code {"type": "scripted", "name": name}}. */
+    public void registerReward(String name, Consumer<ScriptContexts.RewardContext> give) {
+        ScriptRegistry.reward(name, (reward, player) -> give.accept(new ScriptContexts.RewardContext(player, reward)));
+    }
+
+    /** A script lock: {@code {"type": "script", "name": name}}. Return true to keep the quest closed. */
+    public void registerLock(String name, Predicate<ScriptContexts.LockContext> locked) {
+        ScriptRegistry.lock(name, (lock, team, quest) -> locked.test(new ScriptContexts.LockContext(lock, team, quest)));
+    }
+
+    /** A whole new task type usable as {@code {"type": typeName}}, polled like {@link #registerTask}. */
+    public void newTaskType(String typeName, long defaultTarget, ToLongFunction<ScriptContexts.TaskContext> poll) {
+        taskType(typeName, defaultTarget, new ScriptRegistry.TaskCallback() {
+            @Override
+            public long poll(Def task, PlayerView player, long current) {
+                return poll.applyAsLong(new ScriptContexts.TaskContext(player, task, current));
+            }
+        });
+    }
+
+    /** A whole new reward type usable as {@code {"type": typeName}}. */
+    public void newRewardType(String typeName, Consumer<ScriptContexts.RewardContext> give) {
+        rewardType(typeName, (reward, player) -> give.accept(new ScriptContexts.RewardContext(player, reward)));
     }
 
     // ---- events ----

@@ -3,8 +3,6 @@ package com.itmecasey.barelyquesting.ui;
 import com.itmecasey.barelyquesting.core.model.Def;
 import com.itmecasey.barelyquesting.core.model.Quest;
 import com.itmecasey.barelyquesting.core.progress.QuestEngine;
-import com.itmecasey.barelyquesting.core.task.TaskType;
-import com.itmecasey.barelyquesting.core.task.TaskTypes;
 import com.itmecasey.barelyquesting.theme.Theme;
 import com.itmecasey.barelyquesting.theme.ThemeManager;
 
@@ -63,8 +61,7 @@ public final class Hud {
                 if (have >= need && q.tasks.size() > 1) {
                     continue;
                 }
-                TaskType type = TaskTypes.get(t.type);
-                String text = type == null ? t.type : type.describe(t);
+                String text = TaskText.task(g, t);
                 String num = need > 1 ? " " + have + "/" + need : (have >= need ? " done" : "");
                 g.text(trim(g, text, w - 8 - g.textWidth(num, 0)) + num, x + 5, ty, have >= need ? th.color("success") : th.color("text"), Gfx.SHADOW);
                 ty += 11;
