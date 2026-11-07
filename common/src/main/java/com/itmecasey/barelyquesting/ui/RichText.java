@@ -66,6 +66,9 @@ public final class RichText {
                 flush(out, cur, color, style(bold, italic, underline, strike), null);
                 strike = !strike;
                 i += 2;
+            } else if (src.startsWith("**", i)) {
+                cur.append("**"); // unmatched bold marker: show as typed
+                i += 2;
             } else if (c == '*' && (italic || src.indexOf('*', i + 1) > 0)) {
                 flush(out, cur, color, style(bold, italic, underline, strike), null);
                 italic = !italic;
