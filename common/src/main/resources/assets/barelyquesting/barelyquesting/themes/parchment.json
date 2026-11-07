@@ -1,0 +1,225 @@
+{
+  "name": "Parchment",
+  "author": "ItMeCasey",
+  "font": "",
+  "node_size": 28,
+  "colors": {
+    "background": "#c0201408",
+    "panel": "#e8d5a8",
+    "panel_edge": "#8b6b3d",
+    "panel_inset": "#cdb582",
+    "header": "#d8c08a",
+    "text": "#3b2a1a",
+    "text_muted": "#7a6444",
+    "title": "#5c2e0e",
+    "accent": "#9c5a14",
+    "button": "#f4e8c4",
+    "button_hover": "#fff5d6",
+    "button_off": "#cdb582",
+    "tab": "#e8d5a8",
+    "tab_selected": "#fae296",
+    "slot": "#785a32",
+    "bar": "#604828",
+    "bar_fill": "#7aa846",
+    "line": "#7a6444",
+    "line_done": "#4a8046",
+    "node_locked": "#968c7c",
+    "node_available": "#6e96c4",
+    "node_progress": "#e2b23e",
+    "node_complete": "#76b052",
+    "node_claimed": "#4a8046",
+    "node_selected": "#3b2a1a",
+    "danger": "#a82a1c",
+    "success": "#2e7a30"
+  },
+  "sprites": {
+    "panel": {
+      "texture": "barelyquesting:textures/gui/parchment/panel.png",
+      "size": [
+        32,
+        32
+      ],
+      "border": [
+        6,
+        6,
+        6,
+        6
+      ]
+    },
+    "panel_inset": {
+      "texture": "barelyquesting:textures/gui/parchment/panel_inset.png",
+      "size": [
+        32,
+        32
+      ],
+      "border": [
+        6,
+        6,
+        6,
+        6
+      ]
+    },
+    "button": {
+      "texture": "barelyquesting:textures/gui/parchment/button.png",
+      "size": [
+        16,
+        16
+      ],
+      "border": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "button_hover": {
+      "texture": "barelyquesting:textures/gui/parchment/button_hover.png",
+      "size": [
+        16,
+        16
+      ],
+      "border": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "button_off": {
+      "texture": "barelyquesting:textures/gui/parchment/button_off.png",
+      "size": [
+        16,
+        16
+      ],
+      "border": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "tab": {
+      "texture": "barelyquesting:textures/gui/parchment/tab.png",
+      "size": [
+        16,
+        16
+      ],
+      "border": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "tab_selected": {
+      "texture": "barelyquesting:textures/gui/parchment/tab_selected.png",
+      "size": [
+        16,
+        16
+      ],
+      "border": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "slot": {
+      "texture": "barelyquesting:textures/gui/parchment/slot.png",
+      "size": [
+        16,
+        16
+      ],
+      "border": [
+        3,
+        3,
+        3,
+        3
+      ]
+    },
+    "bar": {
+      "texture": "barelyquesting:textures/gui/parchment/bar.png",
+      "size": [
+        16,
+        16
+      ],
+      "border": [
+        3,
+        3,
+        3,
+        3
+      ]
+    },
+    "node_locked": {
+      "texture": "barelyquesting:textures/gui/parchment/node_locked.png",
+      "size": [
+        32,
+        32
+      ],
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "node_available": {
+      "texture": "barelyquesting:textures/gui/parchment/node_available.png",
+      "size": [
+        32,
+        32
+      ],
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "node_progress": {
+      "texture": "barelyquesting:textures/gui/parchment/node_progress.png",
+      "size": [
+        32,
+        32
+      ],
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "node_complete": {
+      "texture": "barelyquesting:textures/gui/parchment/node_complete.png",
+      "size": [
+        32,
+        32
+      ],
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "node_claimed": {
+      "texture": "barelyquesting:textures/gui/parchment/node_claimed.png",
+      "size": [
+        32,
+        32
+      ],
+      "border": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "sounds": {
+    "click": "minecraft:item.book.page_turn",
+    "complete": "minecraft:entity.player.levelup",
+    "claim": "minecraft:entity.experience_orb.pickup",
+    "open": "minecraft:item.book.page_turn"
+  }
+}

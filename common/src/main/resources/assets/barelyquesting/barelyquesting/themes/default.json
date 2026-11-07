@@ -1,0 +1,42 @@
+{
+  "name": "Default",
+  "author": "ItMeCasey",
+  "font": "",
+  "node_size": 26,
+  "colors": {
+    "background": "#c0101018",
+    "panel": "#2b2b33",
+    "panel_edge": "#55556a",
+    "panel_inset": "#1b1b22",
+    "header": "#22222b",
+    "text": "#ededf5",
+    "text_muted": "#a0a0b4",
+    "title": "#ffe28c",
+    "accent": "#f2b33d",
+    "button": "#3a3a48",
+    "button_hover": "#4c4c60",
+    "button_off": "#26262e",
+    "tab": "#2b2b33",
+    "tab_selected": "#45455a",
+    "slot": "#15151b",
+    "bar": "#15151b",
+    "bar_fill": "#4fc36b",
+    "line": "#6a6a80",
+    "line_done": "#4fc36b",
+    "node_locked": "#3a3a44",
+    "node_available": "#4a6fa5",
+    "node_progress": "#c9a227",
+    "node_complete": "#4fc36b",
+    "node_claimed": "#2e7d46",
+    "node_selected": "#ffffff",
+    "danger": "#e05252",
+    "success": "#4fc36b"
+  },
+  "sprites": {},
+  "sounds": {
+    "click": "minecraft:ui.button.click",
+    "complete": "minecraft:entity.player.levelup",
+    "claim": "minecraft:entity.experience_orb.pickup",
+    "open": "minecraft:item.book.page_turn"
+  }
+}

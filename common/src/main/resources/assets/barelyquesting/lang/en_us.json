@@ -1,0 +1,8 @@
+{
+  "key.barelyquesting.open": "Open the Quest Book",
+  "key.category.barelyquesting.keys": "Barely Questing",
+  "screen.barelyquesting.title": "Quest Book",
+  "item.barelyquesting.quest_book": "Quest Book",
+  "itemGroup.barelyquesting": "Barely Questing",
+  "barelyquesting.message.no_edit": "You may not edit quests"
+}
