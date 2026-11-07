@@ -72,7 +72,7 @@ public final class McPlayer implements PlayerView {
                 left -= take;
             }
         }
-        if (left < max) {
+        if (left < max && player.connection != null) {
             player.containerMenu.broadcastChanges();
         }
         return max - left;
@@ -85,7 +85,14 @@ public final class McPlayer implements PlayerView {
         while (total > 0 && !stack.isEmpty()) {
             int n = Math.min(total, stack.getMaxStackSize());
             ItemStack part = stack.copyWithCount(n);
-            player.getInventory().placeItemBackInInventory(part);
+            if (player.connection != null) {
+                player.getInventory().placeItemBackInInventory(part);
+            } else {
+                player.getInventory().add(part);
+                if (!part.isEmpty()) {
+                    player.drop(part, false);
+                }
+            }
             total -= n;
         }
     }
