@@ -16,6 +16,7 @@ public final class NeoForgeBarelyQuesting {
     public NeoForgeBarelyQuesting(IEventBus modBus) {
         Mc.configDir = FMLPaths.CONFIGDIR.get();
         Mc.toPlayer = (ServerPlayer player, byte[] message) -> PacketDistributor.sendToPlayer(player, new QuestPayload(message));
+        com.itmecasey.barelyquesting.core.script.Bridges.install(FMLPaths.GAMEDIR.get());
         modBus.addListener(NeoForgeBarelyQuesting::registerPayloads);
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             NeoForgeClientSetup.install(modBus);

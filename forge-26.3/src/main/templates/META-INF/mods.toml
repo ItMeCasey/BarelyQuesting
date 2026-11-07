@@ -22,3 +22,17 @@ mandatory = true
 versionRange = "[26.3,26.4)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "modjs"
+mandatory = false
+versionRange = "[0,)"
+ordering = "BEFORE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "kubejs"
+mandatory = false
+versionRange = "[0,)"
+ordering = "BEFORE"
+side = "BOTH"
