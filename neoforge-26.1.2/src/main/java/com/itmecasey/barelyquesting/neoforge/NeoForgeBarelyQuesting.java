@@ -23,6 +23,6 @@ public final class NeoForgeBarelyQuesting {
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        event.registrar("1").playBidirectional(QuestPayload.TYPE, QuestPayload.CODEC, QuestPayload::handle);
+        event.registrar("1").playBidirectional(QuestPayload.TYPE, QuestPayload.CODEC, QuestPayload::handle, QuestPayload::handle);
     }
 }

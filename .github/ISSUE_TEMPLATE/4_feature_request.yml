@@ -1,0 +1,38 @@
+name: Feature request
+description: An idea for something Barely Questing could do.
+title: "[Idea] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      placeholder: A task type that counts blocks placed.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it help?
+      description: What you're trying to do in game, and what you do now instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: What part of Barely Questing is it about?
+      options:
+        - A new task, reward or lock type
+        - The book screen, the editor or themes
+        - Scripting (ModJS and KubeJS) or the importers
+        - Recipes and balance
+        - Settings and config
+        - Compatibility with another mod
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Sketch or example
+      description: A mockup, a screenshot from another mod, or a short description of how it would work.

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: How Barely Questing works and what it covers
+    url: https://itmecasey.com/wiki/barelyquesting/
+    about: Quests, tasks, rewards, teams, themes, the editor and scripting. Read this first.
+  - name: Troubleshooting
+    url: https://itmecasey.com/wiki/barelyquesting/?p=troubleshooting
+    about: A task that does not count, a locked quest, and mixed-mod setups.

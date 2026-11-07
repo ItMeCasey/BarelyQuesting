@@ -43,6 +43,8 @@ public final class Ui {
     private List<Zone> zones = new ArrayList<>();
     private List<Zone> last = new ArrayList<>();
     private final List<int[]> clips = new ArrayList<>();
+    private java.util.Map<String, int[]> labels = new java.util.HashMap<>();
+    private java.util.Map<String, int[]> lastLabels = new java.util.HashMap<>();
 
     public void begin(Gfx gfx, Theme theme, int mouseX, int mouseY, long millis) {
         this.g = gfx;
@@ -51,12 +53,14 @@ public final class Ui {
         this.my = mouseY;
         this.now = millis;
         zones = new ArrayList<>();
+        labels = new java.util.HashMap<>();
         clips.clear();
         g.font(theme.font);
     }
 
     public void end() {
         last = zones;
+        lastLabels = labels;
     }
 
     /** Drops every zone registered so far (a modal calls this before drawing itself). */
@@ -158,6 +162,7 @@ public final class Ui {
         String t = fit(label, w - 6, 0);
         g.text(t, x + (w - g.textWidth(t, 0)) / 2, y + (h - g.lineHeight()) / 2 + 1, enabled ? th.color("text") : th.color("text_muted"), 0);
         if (enabled && action != null) {
+            labels.put(label, new int[] {x, y, w, h});
             zone(x, y, w, h, b -> {
                 g.sound(th.sound("click"), 1.0f);
                 action.run();
@@ -172,10 +177,22 @@ public final class Ui {
         th.draw(g, on ? "tab_selected" : (over ? "button_hover" : "button"), x, y, w, h);
         String t = fit(label, w - 6, 0);
         g.text(t, x + (w - g.textWidth(t, 0)) / 2, y + (h - g.lineHeight()) / 2 + 1, on ? th.color("title") : th.color("text"), 0);
+        labels.put(label, new int[] {x, y, w, h});
         zone(x, y, w, h, b -> {
             g.sound(th.sound("click"), 1.0f);
             action.run();
         }, null);
+    }
+
+    /** Clicks the centre of a button or toggle of the last frame by its label (tests and the dev tour use this). */
+    public boolean press(String label) {
+        int[] r = lastLabels.get(label);
+        if (r == null) {
+            return false;
+        }
+        mx = r[0] + r[2] / 2;
+        my = r[1] + r[3] / 2;
+        return click(mx, my, 0);
     }
 
     public void checkbox(int x, int y, int size, boolean on, int markColor) {

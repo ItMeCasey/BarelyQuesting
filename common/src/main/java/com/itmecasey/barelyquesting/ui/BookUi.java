@@ -50,6 +50,11 @@ public final class BookUi {
         return st;
     }
 
+    /** Presses a button of the last frame by its label (dev tour and tests). */
+    public boolean press(String label) {
+        return ui.press(label);
+    }
+
     public Ui ui() {
         return ui;
     }

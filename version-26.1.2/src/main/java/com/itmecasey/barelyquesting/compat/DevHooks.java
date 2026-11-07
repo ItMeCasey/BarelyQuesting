@@ -7,6 +7,18 @@ public final class DevHooks {
     private DevHooks() {
     }
 
+    /** Starts the client tour when BARELYQUESTING_TOUR is set and this build includes it. */
+    public static void clientInit() {
+        if (System.getenv("BARELYQUESTING_TOUR") == null) {
+            return;
+        }
+        try {
+            Class.forName("com.itmecasey.barelyquesting.dev.Tour").getMethod("start").invoke(null);
+        } catch (ReflectiveOperationException e) {
+            System.out.println("BQ-TOUR no tour in this build: " + e);
+        }
+    }
+
     public static void serverStarted(MinecraftServer server) {
         if (System.getenv("BARELYQUESTING_SELFTEST") == null) {
             return;

@@ -1,0 +1,30 @@
+name: A quest, task or reward does not work
+description: A task does not count, a quest stays locked, a reward is missing, or a script or import misbehaves.
+title: "[Quest] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please include the quest file (`config/barelyquesting/chapters/<chapter>.json`, just the quest) so the task or reward can be checked.
+        For a scripting problem, include the script and say whether you use ModJS or KubeJS.
+  - type: dropdown
+    id: area
+    attributes:
+      label: What is wrong
+      options: [Task does not count, Quest stays locked, Reward missing or wrong, Team progress, Editor, Importing FTB Quests or Better Questing, ModJS or KubeJS script, Theme, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: quest
+    attributes:
+      label: The quest JSON
+      render: json
+    validations:
+      required: false
+  - type: textarea
+    id: what
+    attributes:
+      label: What you did and what you expected
+    validations:
+      required: true

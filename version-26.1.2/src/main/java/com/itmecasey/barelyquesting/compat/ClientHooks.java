@@ -29,6 +29,7 @@ public final class ClientHooks {
     public static void init() {
         ClientEnv.Holder.set(new McEnv());
         ClientState.get().loadSettings();
+        DevHooks.clientInit();
     }
 
     public static void resourcesReloaded(ResourceManager manager) {

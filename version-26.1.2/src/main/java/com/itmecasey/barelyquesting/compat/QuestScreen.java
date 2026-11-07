@@ -23,6 +23,10 @@ public final class QuestScreen extends Screen {
         }
     }
 
+    public BookUi ui() {
+        return ui;
+    }
+
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         gfx = new GfxImpl(graphics);
