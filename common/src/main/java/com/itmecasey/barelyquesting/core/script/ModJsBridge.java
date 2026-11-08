@@ -50,7 +50,7 @@ public final class ModJsBridge {
             return true;
         } catch (ClassNotFoundException e) {
             return false;
-        } catch (ReflectiveOperationException | RuntimeException e) {
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
             LOG.warning("Barely Questing: could not add the BarelyQuesting global to ModJS: " + e);
             return false;
         }

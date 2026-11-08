@@ -90,6 +90,14 @@ public final class SelfTest {
         ServerPlayer sp = new ServerPlayer(server, server.overworld(), new GameProfile(UUID.nameUUIDFromBytes("selftest".getBytes()), "selftest"),
                 ClientInformation.createDefault());
         McPlayer p = new McPlayer(sp);
+        if (System.getenv("BARELYQUESTING_INTEGRATIONS") != null) {
+            for (String mod : System.getenv("BARELYQUESTING_INTEGRATIONS").split(",")) {
+                var engine = live.engine();
+                check(mod + " startup quest", engine.book().quest(mod + "_quest") != null);
+                engine.poll(p);
+                check(mod + " script callback", engine.isComplete(engine.teams().teamOf(p.uuid()).id, mod + "_quest"));
+            }
+        }
         p.giveItem(ItemSpec.of("minecraft:cobblestone", 70));
         check("give and count items", p.countItems(ItemSpec.of("minecraft:cobblestone")) == 70);
         check("take items", p.takeItems(ItemSpec.of("minecraft:cobblestone"), 20) == 20 && p.countItems(ItemSpec.of("minecraft:cobblestone")) == 50);

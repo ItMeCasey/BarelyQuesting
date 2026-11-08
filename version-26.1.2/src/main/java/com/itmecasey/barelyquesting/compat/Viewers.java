@@ -2,26 +2,24 @@ package com.itmecasey.barelyquesting.compat;
 
 import com.itmecasey.barelyquesting.core.model.ItemSpec;
 import java.lang.reflect.Method;
+import com.itmecasey.barelyquesting.core.script.ViewerDispatch;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Opens recipe and usage pages in an installed recipe viewer: EMI, REI or JEI (tried in that order). Everything goes through
+ * Opens recipe and usage pages in an installed recipe viewer: BEI, EMI, REI or JEI (tried in that order). Everything goes through
  * reflection, so no viewer is needed to build or run the mod, and a viewer that changes its API only makes this return false.
- * BEI has no item lookup in its public API yet, so it is not driven from here.
+ * BEI currently exposes its lookup through an internal popup; a container host makes it available from the quest screen.
  */
 public final class Viewers {
-    private static final Logger LOG = Logger.getLogger("barelyquesting");
-
     private Viewers() {
     }
 
     private static boolean has(String className) {
         try {
-            Class.forName(className);
+            Class.forName(className, false, Viewers.class.getClassLoader());
             return true;
         } catch (ClassNotFoundException | LinkageError e) {
             return false;
@@ -30,6 +28,7 @@ public final class Viewers {
 
     public static List<String> installed() {
         List<String> out = new ArrayList<>();
+        if (has("com.itmecasey.bei.client.RecipePopup")) out.add("BEI");
         if (has("dev.emi.emi.api.EmiApi")) {
             out.add("EMI");
         }
@@ -48,23 +47,41 @@ public final class Viewers {
         if (stack.isEmpty()) {
             return false;
         }
-        try {
-            if (emi(stack, uses) || rei(stack, uses) || jei(stack, uses)) {
-                return true;
-            }
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            LOG.warning("Barely Questing: the recipe viewer call failed: " + e);
-        }
-        return false;
+        return ViewerDispatch.first(() -> bei(stack, uses), () -> emi(stack, uses), () -> rei(stack, uses), () -> jei(stack, uses));
     }
 
-    private static Method find(Class<?> type, String name, int params) {
-        for (Method m : type.getMethods()) {
-            if (m.getName().equals(name) && m.getParameterCount() == params) {
-                return m;
+    private static boolean bei(ItemStack stack, boolean uses) throws ReflectiveOperationException {
+        if (!has("com.itmecasey.bei.client.RecipePopup")) return false;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return false;
+        // Resolve the optional API before switching screens; restore the quest screen if the call fails.
+        Method open = Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("open", net.minecraft.world.item.Item.class, boolean.class);
+        Method close = Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("close");
+        Method isOpen = Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("isOpen");
+        var previous = mc.screen;
+        mc.setScreen(new net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<net.minecraft.world.inventory.InventoryMenu>(
+                mc.player.inventoryMenu, mc.player.getInventory(), net.minecraft.network.chat.Component.literal("Recipes")) {
+            @Override public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor graphics, int x, int y, float tick) {
+                if (previous != null) previous.extractRenderState(graphics, x, y, tick);
             }
+            @Override public void extractBackground(net.minecraft.client.gui.GuiGraphicsExtractor graphics, int x, int y, float tick) { }
+            @Override protected void containerTick() {
+                boolean open = ViewerDispatch.first(() -> (Boolean) isOpen.invoke(null));
+                if (!open) onClose();
+            }
+            @Override public void onClose() { mc.setScreen(previous); }
+            @Override public void removed() {
+                super.removed();
+                ViewerDispatch.first(() -> { close.invoke(null); return true; });
+            }
+        });
+        try {
+            open.invoke(null, stack.getItem(), uses);
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            mc.setScreen(previous);
+            throw e;
         }
-        return null;
     }
 
     private static boolean emi(ItemStack stack, boolean uses) throws ReflectiveOperationException {
@@ -72,10 +89,8 @@ public final class Viewers {
             return false;
         }
         Object emiStack = Class.forName("dev.emi.emi.api.stack.EmiStack").getMethod("of", ItemStack.class).invoke(null, stack);
-        Method show = find(Class.forName("dev.emi.emi.api.EmiApi"), uses ? "displayUses" : "displayRecipes", 1);
-        if (show == null) {
-            return false;
-        }
+        Method show = Class.forName("dev.emi.emi.api.EmiApi").getMethod(uses ? "displayUses" : "displayRecipes",
+                Class.forName("dev.emi.emi.api.stack.EmiIngredient"));
         show.invoke(null, emiStack);
         return true;
     }
@@ -87,10 +102,8 @@ public final class Viewers {
         Object entry = Class.forName("me.shedaniel.rei.api.common.util.EntryStacks").getMethod("of", ItemStack.class).invoke(null, stack);
         Class<?> builderType = Class.forName("me.shedaniel.rei.api.client.view.ViewSearchBuilder");
         Object builder = builderType.getMethod("builder").invoke(null);
-        Method add = find(builderType, uses ? "addUsagesFor" : "addRecipesFor", 1);
-        if (add == null) {
-            return false;
-        }
+        Class<?> entryType = Class.forName("me.shedaniel.rei.api.common.entry.EntryStack");
+        Method add = builderType.getMethod(uses ? "addUsagesFor" : "addRecipesFor", entryType);
         add.invoke(builder, entry);
         Object result = builderType.getMethod("open").invoke(builder);
         return !(result instanceof Boolean) || (Boolean) result;
@@ -107,21 +120,17 @@ public final class Viewers {
         if (runtime == null) {
             return false;
         }
-        Object helpers = runtime.getClass().getMethod("getJeiHelpers").invoke(runtime);
-        Object focusFactory = helpers.getClass().getMethod("getFocusFactory").invoke(helpers);
+        Object helpers = Class.forName("mezz.jei.api.runtime.IJeiRuntime").getMethod("getJeiHelpers").invoke(runtime);
+        Object focusFactory = Class.forName("mezz.jei.api.helpers.IJeiHelpers").getMethod("getFocusFactory").invoke(helpers);
         Class<?> role = Class.forName("mezz.jei.api.recipe.RecipeIngredientRole");
         Object roleValue = role.getField(uses ? "INPUT" : "OUTPUT").get(null);
         Object type = Class.forName("mezz.jei.api.constants.VanillaTypes").getField("ITEM_STACK").get(null);
-        Method create = find(focusFactory.getClass(), "createFocus", 3);
-        if (create == null) {
-            return false;
-        }
+        Method create = Class.forName("mezz.jei.api.recipe.IFocusFactory").getMethod("createFocus",
+                role, Class.forName("mezz.jei.api.ingredients.IIngredientType"), Object.class);
         Object focus = create.invoke(focusFactory, roleValue, type, stack);
-        Object gui = runtime.getClass().getMethod("getRecipesGui").invoke(runtime);
-        Method show = find(gui.getClass(), "show", 1);
-        if (show == null) {
-            return false;
-        }
+        Object gui = Class.forName("mezz.jei.api.runtime.IJeiRuntime").getMethod("getRecipesGui").invoke(runtime);
+        Method show = Class.forName("mezz.jei.api.runtime.IRecipesGui").getMethod("show",
+                Class.forName("mezz.jei.api.recipe.IFocus"));
         show.invoke(gui, focus);
         return true;
     }

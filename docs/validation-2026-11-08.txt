@@ -1,0 +1,32 @@
+integration-kubejs-jei.log
+BQ-TOUR INTEGRATION PASS kubejs startup creation, callback progress and client sync
+BQ-TOUR INTEGRATION PASS viewer recipes
+BQ-TOUR INTEGRATION PASS viewer uses
+BQ-TOUR DONE
+
+integration-rei.log
+BQ-TOUR INTEGRATION PASS viewer recipes
+BQ-TOUR INTEGRATION PASS viewer uses
+BQ-TOUR DONE
+
+integration-bei-final.log
+BQ-TOUR INTEGRATION PASS viewer recipes
+BQ-TOUR INTEGRATION PASS BEI return and popup cleanup
+BQ-TOUR INTEGRATION PASS viewer uses
+BQ-TOUR INTEGRATION PASS BEI return and popup cleanup
+BQ-TOUR DONE
+
+integration-none.log
+BQ-TOUR INTEGRATION PASS no optional viewers; quest screen remains usable
+BQ-TOUR DONE
+
+integration-modjs-server.log
+SELFTEST PASS modjs startup quest
+SELFTEST PASS modjs script callback
+SELFTEST DONE failures=0 passes=35
+
+integration-server-none.log
+SELFTEST DONE failures=0 passes=33
+
+Final release build: 58 unit tests, 0 failures/errors. No dev classes or optional mod classes bundled.
+SHA-256: ca0347c29430106cf9d68203dfebdb1344282c6a0340223b74ea8543e5ecd7ff

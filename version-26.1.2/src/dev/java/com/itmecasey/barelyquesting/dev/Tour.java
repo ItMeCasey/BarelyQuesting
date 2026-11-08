@@ -96,9 +96,63 @@ public final class Tour {
         ClientState st = ClientState.get();
         log("connected=" + st.connected + " canEdit=" + st.canEdit + " chapters=" + st.book.chapters.size());
 
+        if (System.getenv("BARELYQUESTING_INTEGRATIONS") != null) {
+            for (String mod : System.getenv("BARELYQUESTING_INTEGRATIONS").split(",")) {
+                if (st.book.quest(mod + "_quest") == null) throw new IllegalStateException(mod + " startup quest missing");
+                CompletableFuture<Void> checked = new CompletableFuture<>();
+                server.execute(() -> {
+                    try {
+                        var engine = com.itmecasey.barelyquesting.compat.ServerHooks.quests().engine();
+                        var player = server.getPlayerList().getPlayers().get(0);
+                        var team = engine.teams().teamOf(player.getUUID()).id;
+                        if (!engine.isComplete(team, mod + "_quest")) throw new IllegalStateException(mod + " callback did not complete task");
+                        checked.complete(null);
+                    } catch (Throwable t) { checked.completeExceptionally(t); }
+                });
+                checked.get(10, TimeUnit.SECONDS);
+                log("INTEGRATION PASS " + mod + " startup creation, callback progress and client sync");
+            }
+        }
         onClient(() -> ClientHooks.openBook(null));
         Thread.sleep(2500);
         shot("graph");
+        if ("none".equals(System.getenv("BARELYQUESTING_VIEWER"))) {
+            onClient(() -> {
+                var before = mc.screen;
+                if (!com.itmecasey.barelyquesting.compat.Viewers.installed().isEmpty()
+                        || com.itmecasey.barelyquesting.compat.Viewers.show(com.itmecasey.barelyquesting.core.model.ItemSpec.of("minecraft:oak_planks"), false)
+                        || mc.screen != before) throw new IllegalStateException("no-viewer fallback changed the screen");
+            });
+            log("INTEGRATION PASS no optional viewers; quest screen remains usable");
+        } else if (System.getenv("BARELYQUESTING_VIEWER") != null) {
+            for (boolean uses : new boolean[] {false, true}) {
+                boolean[] opened = {false};
+                onClient(() -> opened[0] = com.itmecasey.barelyquesting.compat.Viewers.show(
+                        com.itmecasey.barelyquesting.core.model.ItemSpec.of("minecraft:oak_planks"), uses));
+                if (!opened[0]) throw new IllegalStateException("viewer lookup failed: uses=" + uses);
+                Thread.sleep(1500);
+                shot("viewer_" + (uses ? "uses" : "recipes"));
+                log("INTEGRATION PASS viewer " + (uses ? "uses" : "recipes"));
+                if ("bei".equals(System.getenv("BARELYQUESTING_VIEWER"))) {
+                    onClient(() -> {
+                        try {
+                            Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("close").invoke(null);
+                        } catch (ReflectiveOperationException e) { throw new IllegalStateException(e); }
+                        mc.screen.tick();
+                        if (!(mc.screen instanceof QuestScreen)) throw new IllegalStateException("BEI did not return to the quest screen");
+                        try {
+                            if ((Boolean) Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("isOpen").invoke(null))
+                                throw new IllegalStateException("BEI left a stale popup");
+                        } catch (ReflectiveOperationException e) { throw new IllegalStateException(e); }
+                    });
+                    log("INTEGRATION PASS BEI return and popup cleanup");
+                }
+                onClient(() -> ClientHooks.openBook(null));
+                Thread.sleep(500);
+            }
+        }
+
+        if (System.getenv("BARELYQUESTING_INTEGRATION_ONLY") != null) return;
 
         onClient(() -> ui().select("bench"));
         Thread.sleep(700);

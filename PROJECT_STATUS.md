@@ -1,17 +1,17 @@
 # Project Status
 <!-- status-format: 1 -->
-Updated: 2026-11-07
-Summary: Barely Questing has a NeoForge 26.1.2 reference build with a 33-check headless self-test, shared quest engine, UI toolkit, importers and optional scripting/viewer bridges; ports and real-client checks remain open.
+Updated: 2026-11-08
+Summary: NeoForge 26.1.2 builds and passes shared tests plus 33 standalone headless checks (35 with ModJS). KubeJS startup creation/callback/client sync and BEI/JEI/REI lookups have real-client evidence; ModJS client validation is blocked by the published ModJS jar, and all other ports remain open.
 Spend: none
 
 ## Foundation
 - [x] DESIGN_BRIEF.md and PLAN.md written (w:2)
 - [x] Repository, ten Gradle modules, shared common/ and version-<mc> layout (w:3)
-- [~] NeoForge 26.1.2 reference build compiles and passes 33 headless self-test checks; the keybind and book screen are not yet checked in a real client (w:4)
+- [~] NeoForge 26.1.2 reference build compiles and passes 33 headless self-test checks; the book opens in a real client through the dev hook; the keybind is not checked (w:4)
 
 ## Data and server
-- [~] Data model and JSON storage under config/barelyquesting (implemented and unit-tested; not inspected in a running game) (w:4)
-- [~] Server-authoritative engine, progress and sync (implemented and covered by unit and headless self-tests; no real client networking check) (w:5)
+- [~] Data model and JSON storage under config/barelyquesting (implemented and unit-tested; script-created content was saved and synced in an integrated client) (w:4)
+- [~] Server-authoritative engine, progress and sync (implemented and covered by unit/headless tests; script-created quest sync checked in an integrated client, multiplayer unverified) (w:5)
 - [~] Teams (solo auto team, create/invite/join/leave; unit-tested, not checked in a game) (w:3)
 - [~] Task types: item, craft, obtain, kill, advancement, statistic (implemented and unit-tested) (w:4)
 - [~] Task types: location, dimension, biome, structure, checkmark, scripted (implemented and unit-tested) (w:3)
@@ -27,22 +27,23 @@ Spend: none
 - [~] Commands, HUD tracker, toasts, quest book item (implemented and headless-tested where possible; not checked in a real client) (w:3)
 
 ## Integrations
-- [~] ModJS bridge (optional reflective binding implemented and unit-tested on the reference build; not checked with ModJS installed) (w:3)
-- [~] KubeJS bridge (optional helper-script bridge implemented; not checked with KubeJS installed) (w:3)
-- [~] Recipe viewer item clicks (optional EMI, REI and JEI reflection bridge implemented; BEI has no public lookup API; no viewer client check) (w:3)
+- [~] ModJS bridge (optional binding unit-tested and passed dedicated-server startup/callback checks with ModJS 2026.11.23; published ModJS client jar fails loading: missing modjs:data client handler) (w:3)
+- [~] KubeJS bridge (helper-script bridge checked with KubeJS 26.1.2-8.0.8 in a real client: startup creation, callback completion and sync; native plugin/reload cleanup not implemented) (w:3)
+- [~] Recipe viewer item clicks (BEI, REI and JEI recipes/usages checked in real clients with inspected frames; isolated fallback tested; EMI retained but no compatible NeoForge 26.1.2 build listed by Modrinth; BEI uses an internal popup adapter) (w:3)
 - [~] FTB Quests and Better Questing importer (implemented and unit-tested; not tried against a live book) (w:3)
 
 ## Ports
 - [ ] Forge 26.1.2, NeoForge and Forge 26.2 and 26.3 (w:4)
-- [ ] NeoForge and Forge 1.21.1 (w:3)
+- [ ] NeoForge and Forge 1.21.1 (no loader entrypoint or version adapter exists yet; a trial copy of the 26.1.2 adapter failed to compile against 1.21.1 APIs and was removed) (w:3)
 - [ ] NeoForge and Forge 1.20.1 (w:3)
 
 ## Testing
-- [~] Unit tests for common/ in all ten modules (pass on the NeoForge 26.1.2 reference build; ports unverified) (w:3)
-- [~] Headless self test on all ten builds (NeoForge 26.1.2 passes 33 checks; ports unverified) (w:4)
-- [ ] Client check with frames (w:3)
+- [~] Unit tests for common/ in all ten modules (58 tests pass on the NeoForge 26.1.2 reference build; ports unverified) (w:3)
+- [~] Headless self test on all ten builds (NeoForge 26.1.2 passes 33 checks without optional mods and 35 with ModJS; ports unverified) (w:4)
+- [~] Client check with frames (KubeJS creation/callback/sync and BEI/JEI/REI recipes/usages plus no-optional-mod fallback checked; general keybind/editor/reward acceptance and ModJS client check remain open) (w:3)
 
 ## CI, release and docs
+- [x] Scripting API guide, integration matrix, reproduction fixtures and reviewed viewer frames (docs/scripting.md, docs/integrations.md, docs/frames/) (w:2)
 - [~] build.yml, release.yml, CurseForge script, issue templates (built locally, not pushed) (w:3)
 - [ ] Branding, listing text, CurseForge description (w:2)
 - [ ] Wiki pages written (not deployed) (w:3)

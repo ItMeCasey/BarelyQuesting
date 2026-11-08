@@ -76,3 +76,14 @@ dependencies {
     testImplementation "org.mozilla:rhino:1.7.15"
 }
 tasks.withType(Test).configureEach { useJUnitPlatform() }
+
+// Local validation only: opt-in folders of unbundled optional mods, never included in release jars.
+if (project.hasProperty('integrationMods')) {
+    if (!project.hasProperty('devTools')) throw new GradleException('integrationMods requires -PdevTools')
+    dependencies {
+        project.property('integrationMods').toString().split(',').each { profile ->
+            if (!(profile ==~ /[a-z]+/)) throw new GradleException('Invalid integration profile')
+            runtimeOnly fileTree(dir: ".integration-cache/${profile}", include: ['*.jar'])
+        }
+    }
+}
