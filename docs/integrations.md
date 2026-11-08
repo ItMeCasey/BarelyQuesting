@@ -4,7 +4,7 @@ Validated on 2026-11-08 with NeoForge 26.1.2.125 and Java 25. Other loader/versi
 
 | Integration | Version tested | Result |
 | --- | --- | --- |
-| ModJS | 2026.11.23 | Dedicated server: startup quest creation and scripted-task callback passed; 35 self-test checks passed. Published client jar fails loading because `modjs:data` has no client handler. |
+| ModJS | 2026.11.30 development snapshot | Real client: startup definition, reset-and-poll callback completion and client progress sync passed; screenshot inspected. Dedicated server: all 35 checks passed. |
 | KubeJS | 26.1.2-8.0.8 | Real client: helper loading, startup quest creation, callback completion and client sync passed. |
 | BEI | 2026.11.7 | Real client: recipes, usages, popup cleanup and return to the quest book all passed; screenshots inspected. |
 | JEI | 29.53.0.115 | Real client: oak plank recipes and usages opened correctly; both screenshots inspected. |
@@ -32,7 +32,7 @@ $env:BARELYQUESTING_INTEGRATION_ONLY = '1'
 .\gradlew.bat runClient -PdevTools '-PintegrationMods=kubejs,jei' --no-daemon
 ```
 
-For viewer-only runs omit `BARELYQUESTING_INTEGRATIONS` and select the viewer profile. Use viewer `none` and omit `integrationMods` to check the no-viewer path. The tour uses game handlers, captures screenshots, logs assertions, and exits. **Check for `BQ-TOUR FAILED` as well as `BQ-TOUR DONE`; Gradle success alone is not a tour pass.** Screenshots are in `run/screenshots/`; reviewed copies are in `docs/frames/`.
+For viewer-only runs omit `BARELYQUESTING_INTEGRATIONS` and select the viewer profile. Use viewer `none` and omit `integrationMods` to check the no-viewer path. The tour resets the integration quest, polls its script callback again, flushes updates, and asserts client progress and completion, so saved progress cannot supply a false pass. It uses game handlers, captures screenshots, logs assertions, and exits. **Check for `BQ-TOUR FAILED` as well as `BQ-TOUR DONE`; Gradle success alone is not a tour pass.** Screenshots are in `run/screenshots/`; reviewed copies are in `docs/frames/`.
 
 For dedicated-server ModJS checks set `BARELYQUESTING_SELFTEST=1` and `BARELYQUESTING_INTEGRATIONS=modjs`, then run `runServer -PdevTools -PintegrationMods=modjs`. Without the integration variable and property the self-test runs the 33 base checks. Read `SELFTEST DONE failures=0`; the server stops itself.
 
@@ -40,4 +40,4 @@ Use the development run directory only for disposable validation data. Do not ru
 
 ## Remaining gaps
 
-The published ModJS client-loading error must be resolved upstream before a successful ModJS client integration check is possible. KubeJS support uses a startup helper instead of a native plugin; registration cleanup during server-script reloads is not implemented, so restart after changing callback registrations. EMI is unverified on this target. The general client tour previously logged a failed `Claim all` button action against reused test data; broad editor/reward/keybind acceptance has not been claimed by these focused integration checks.
+ModJS 2026.11.23 had a missing `modjs:data` client handler. The tested local 2026.11.30 development snapshot fixes that blocker (payload fix 3768dfd, plus pending HUD/JEI changes); it is not a published release. SHA-256: `882a0aeffeb5ed156ef45cbb79c9f1c8a968a8930e36a8a2d394e6862f4b7dc6`. Its logs also report a ModJS-generated global-loot-modifier JSON parse error, forwarded to the ModJS agent; it did not prevent these quest integration checks. KubeJS support uses a startup helper instead of a native plugin; registration cleanup during server-script reloads is not implemented, so restart after changing callback registrations. EMI is unverified on this target. The general client tour previously logged a failed `Claim all` button action against reused test data; broad editor/reward/keybind acceptance has not been claimed by these focused integration checks.

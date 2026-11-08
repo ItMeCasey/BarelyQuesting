@@ -105,17 +105,33 @@ public final class Tour {
                         var engine = com.itmecasey.barelyquesting.compat.ServerHooks.quests().engine();
                         var player = server.getPlayerList().getPlayers().get(0);
                         var team = engine.teams().teamOf(player.getUUID()).id;
+                        engine.reset(team, mod + "_quest");
+                        engine.poll(new com.itmecasey.barelyquesting.compat.McPlayer(player));
+                        com.itmecasey.barelyquesting.compat.ServerHooks.quests().flush();
                         if (!engine.isComplete(team, mod + "_quest")) throw new IllegalStateException(mod + " callback did not complete task");
                         checked.complete(null);
                     } catch (Throwable t) { checked.completeExceptionally(t); }
                 });
                 checked.get(10, TimeUnit.SECONDS);
-                log("INTEGRATION PASS " + mod + " startup creation, callback progress and client sync");
+                Thread.sleep(500);
+                onClient(() -> {
+                    var progress = st.progress.get(st.teamId, mod + "_quest");
+                    if (progress == null || !progress.complete || progress.task("ready") != 1)
+                        throw new IllegalStateException(mod + " fresh callback progress did not sync");
+                });
+                log("INTEGRATION PASS " + mod + " startup creation, fresh callback progress and client sync");
             }
         }
         onClient(() -> ClientHooks.openBook(null));
         Thread.sleep(2500);
         shot("graph");
+        if (System.getenv("BARELYQUESTING_INTEGRATIONS") != null) {
+            for (String mod : System.getenv("BARELYQUESTING_INTEGRATIONS").split(",")) {
+                onClient(() -> { ui().chapterId = mod + "_validation"; ui().select(mod + "_quest"); });
+                Thread.sleep(600);
+                shot(mod + "_integration");
+            }
+        }
         if ("none".equals(System.getenv("BARELYQUESTING_VIEWER"))) {
             onClient(() -> {
                 var before = mc.screen;

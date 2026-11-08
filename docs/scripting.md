@@ -4,7 +4,7 @@ ModJS and KubeJS are optional. The functional reference layer is NeoForge on Min
 
 ## ModJS
 
-Use `BarelyQuesting` in `modjs/startup_scripts/` to register callbacks and define content. The bridge uses ModJS's `ExtraBindings.register(BindingProvider)` extension API and does nothing when ModJS is absent. ModJS 2026.11.23 passed dedicated-server creation and callback checks. That published jar currently fails the client load check with a missing `modjs:data` client handler; client integration remains open.
+Use `BarelyQuesting` in `modjs/startup_scripts/` to register callbacks and define content. The bridge uses ModJS's `ExtraBindings.register(BindingProvider)` extension API and does nothing when ModJS is absent. ModJS 2026.11.30 (a local development snapshot containing payload fix 3768dfd) passed dedicated-server creation/callback checks and the real-client startup/fresh-callback/progress-sync check. Its SHA-256 is recorded in docs/integrations.md. The older 2026.11.23 jar failed client loading with a missing `modjs:data` client handler; that blocker is resolved in the tested snapshot.
 
 ## KubeJS
 

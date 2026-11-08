@@ -30,3 +30,15 @@ SELFTEST DONE failures=0 passes=33
 
 Final release build: 58 unit tests, 0 failures/errors. No dev classes or optional mod classes bundled.
 SHA-256: ca0347c29430106cf9d68203dfebdb1344282c6a0340223b74ea8543e5ecd7ff
+
+ModJS fixed development snapshot 2026.11.30
+SHA-256: 882a0aeffeb5ed156ef45cbb79c9f1c8a968a8930e36a8a2d394e6862f4b7dc6
+Payload fix commit reported by ModJS agent: 3768dfd; jar also includes pending HUD/JEI changes.
+integration-modjs-fixed-fresh.log
+BQ-TOUR INTEGRATION PASS modjs startup creation, fresh callback progress and client sync
+BQ-TOUR DONE
+
+integration-modjs-fixed-server.log
+SELFTEST PASS modjs startup quest
+SELFTEST PASS modjs script callback
+SELFTEST DONE failures=0 passes=35

@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-08
-Summary: NeoForge 26.1.2 builds and passes shared tests plus 33 standalone headless checks (35 with ModJS). KubeJS startup creation/callback/client sync and BEI/JEI/REI lookups have real-client evidence; ModJS client validation is blocked by the published ModJS jar, and all other ports remain open.
+Summary: NeoForge 26.1.2 builds and passes shared tests plus 33 standalone headless checks (35 with ModJS). KubeJS startup creation/callback/client sync and BEI/JEI/REI lookups have real-client evidence; ModJS 2026.11.30 development snapshot also passed fresh callback/client-sync checks; all other ports remain open.
 Spend: none
 
 ## Foundation
@@ -27,7 +27,7 @@ Spend: none
 - [~] Commands, HUD tracker, toasts, quest book item (implemented and headless-tested where possible; not checked in a real client) (w:3)
 
 ## Integrations
-- [~] ModJS bridge (optional binding unit-tested and passed dedicated-server startup/callback checks with ModJS 2026.11.23; published ModJS client jar fails loading: missing modjs:data client handler) (w:3)
+- [~] ModJS bridge (optional binding unit-tested; ModJS 2026.11.30 development snapshot passes 35 dedicated-server checks plus real-client startup creation, reset-and-poll callback and progress sync; older .23 client payload blocker resolved in this snapshot) (w:3)
 - [~] KubeJS bridge (helper-script bridge checked with KubeJS 26.1.2-8.0.8 in a real client: startup creation, callback completion and sync; native plugin/reload cleanup not implemented) (w:3)
 - [~] Recipe viewer item clicks (BEI, REI and JEI recipes/usages checked in real clients with inspected frames; isolated fallback tested; EMI retained but no compatible NeoForge 26.1.2 build listed by Modrinth; BEI uses an internal popup adapter) (w:3)
 - [~] FTB Quests and Better Questing importer (implemented and unit-tested; not tried against a live book) (w:3)
@@ -40,7 +40,7 @@ Spend: none
 ## Testing
 - [~] Unit tests for common/ in all ten modules (58 tests pass on the NeoForge 26.1.2 reference build; ports unverified) (w:3)
 - [~] Headless self test on all ten builds (NeoForge 26.1.2 passes 33 checks without optional mods and 35 with ModJS; ports unverified) (w:4)
-- [~] Client check with frames (KubeJS creation/callback/sync and BEI/JEI/REI recipes/usages plus no-optional-mod fallback checked; general keybind/editor/reward acceptance and ModJS client check remain open) (w:3)
+- [~] Client check with frames (KubeJS creation/callback/sync and BEI/JEI/REI recipes/usages plus no-optional-mod fallback checked; ModJS 2026.11.30 fresh callback/client-sync check also passed; general keybind/editor/reward acceptance remains open) (w:3)
 
 ## CI, release and docs
 - [x] Scripting API guide, integration matrix, reproduction fixtures and reviewed viewer frames (docs/scripting.md, docs/integrations.md, docs/frames/) (w:2)
