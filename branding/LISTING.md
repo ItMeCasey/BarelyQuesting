@@ -7,7 +7,7 @@
 | Class / category | Mods; Quests (or Utility and QoL) |
 | License | MIT |
 | Environment | Client and Server (needed on both) |
-| Project id | not created yet (Casey creates the project; put the id in `.github/scripts/publish_curseforge.py` as `PROJECT_ID`) |
+| Project id | 1794334 (also `PROJECT_ID` in `.github/scripts/publish_curseforge.py`) |
 | Logo | `branding/icon/icon_512.png` |
 | Summary (max 250) | An in-game quest book for Forge and NeoForge: a node graph or a list, tasks and rewards, teams, resource-pack themes, an in-game editor, and ModJS and KubeJS scripting. |
 | Description | `curseforge/DESCRIPTION.md` (Markdown); its images load from the GitHub repo, so push `branding/` first |

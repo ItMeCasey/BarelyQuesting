@@ -45,7 +45,7 @@ Spend: none
 
 ## CI, release and docs
 - [x] Scripting API guide, integration matrix, reproduction fixtures and reviewed viewer frames (docs/scripting.md, docs/integrations.md, docs/frames/) (w:2)
-- [~] build.yml, release.yml, CurseForge script, issue templates (written, not pushed; CurseForge PROJECT_ID is 0 until the project exists) (w:3)
+- [~] build.yml, release.yml, CurseForge script, issue templates (written, not pushed; CurseForge PROJECT_ID 1794334 set) (w:3)
 - [x] Branding, listing text, CurseForge description (branding/, curseforge/DESCRIPTION.md) (w:2)
 - [x] Wiki pages written (wiki/barelyquesting; not deployed) (w:3)
 - [x] README, CHANGELOG, compatibility and known-gaps docs (w:2)
