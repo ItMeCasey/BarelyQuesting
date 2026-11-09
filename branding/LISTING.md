@@ -11,7 +11,7 @@
 | Logo | `branding/icon/icon_512.png` |
 | Summary (max 250) | An in-game quest book for Forge and NeoForge: a node graph or a list, tasks and rewards, teams, resource-pack themes, an in-game editor, and ModJS and KubeJS scripting. |
 | Description | `curseforge/DESCRIPTION.md` (Markdown; no install or testing sections); its images load from the GitHub repo, so push `branding/` first |
-| Links | Source and issues: github.com/ItMeCasey/BarelyQuesting; Wiki: itmecasey.com/wiki/barelyquesting |
+| Links (CurseForge fields) | Source: https://github.com/ItMeCasey/BarelyQuesting; Issues: https://github.com/ItMeCasey/BarelyQuesting/issues; Wiki: https://itmecasey.com/wiki/barelyquesting/ |
 | Game versions | Minecraft 1.20.1 (Forge, NeoForge), 1.21.1 (Forge, NeoForge), 26.1.2, 26.2, 26.3 (Forge, NeoForge) |
 
 ## Gallery
