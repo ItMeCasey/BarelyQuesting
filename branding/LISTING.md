@@ -18,7 +18,7 @@
 
 | File | Use |
 |---|---|
-| `branding/banners/features.png` | feature card |
+| `branding/banners/features.png`, `themes.png` | feature and theme cards |
 | `branding/banners/social.png` | social preview (GitHub Settings, Social preview) |
 | `docs/frames/` | real client frames of the reference build |
 
