@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-09
-Summary: Barely Questing 2026.11.1 builds for all ten Forge and NeoForge targets (1.20.1, 1.21.1, 26.1.2, 26.2, 26.3) and every build passes the headless dedicated-server self test; the screen, editor, themes, HUD, viewer clicks and ModJS/KubeJS bridges were checked on a real client on NeoForge 26.1.2 only; nothing is pushed or published yet.
+Summary: Barely Questing 2026.11.1 builds for all ten Forge and NeoForge targets (1.20.1, 1.21.1, 26.1.2, 26.2, 26.3) and every build passes the headless dedicated-server self test; the screen, editor, themes, HUD, viewer clicks and ModJS/KubeJS bridges were checked on a real client on NeoForge 26.1.2 only; the repo is public and pushed, tag v2026.11.1 and the GitHub prerelease exist, the wiki is live, and ten beta files are uploaded to CurseForge project 1794334 awaiting review and Casey's approval (the PM owns further tags and releases).
 Spend: none
 
 ## Foundation
@@ -45,10 +45,10 @@ Spend: none
 
 ## CI, release and docs
 - [x] Scripting API guide, integration matrix, reproduction fixtures and reviewed viewer frames (docs/scripting.md, docs/integrations.md, docs/frames/) (w:2)
-- [~] build.yml, release.yml, CurseForge script, issue templates (written, not pushed; CurseForge PROJECT_ID 1794334 set) (w:3)
+- [~] build.yml, release.yml, CurseForge script, issue templates (pushed; CI green; CurseForge PROJECT_ID 1794334 and token set) (w:3)
 - [x] Branding, listing text, CurseForge description (branding/, curseforge/DESCRIPTION.md) (w:2)
-- [x] Wiki pages written (wiki/barelyquesting; not deployed) (w:3)
+- [x] Wiki pages written (wiki/barelyquesting; deployed, matches the site copy) (w:3)
 - [x] README, CHANGELOG, compatibility and known-gaps docs (w:2)
-- [~] Pushed to GitHub (public repo, CurseForge token set); CI running, not released (w:3)
-- [ ] CurseForge project created and first release uploaded (w:2)
+- [x] Pushed to GitHub (public repo ItMeCasey/BarelyQuesting, CI green, tag v2026.11.1, prerelease with ten jars) (w:3)
+- [~] CurseForge project 1794334 created and ten beta files uploaded; awaiting review and Casey's approval (w:2)
 - [x] Wiki deployed to itmecasey.com (live, pages return 200) (w:1)
