@@ -86,10 +86,15 @@ public final class Tour {
     }
 
     private static void press(String label) throws Exception {
+        pressed(label);
+    }
+
+    private static boolean pressed(String label) throws Exception {
         boolean[] ok = {false};
         onClient(() -> ok[0] = ui().press(label));
         log("press " + label + " -> " + ok[0]);
         Thread.sleep(700);
+        return ok[0];
     }
 
     private static void tour() throws Exception {
@@ -206,12 +211,13 @@ public final class Tour {
         Thread.sleep(300);
         onClient(() -> ThemeManager.select("barelyquesting:default"));
 
-        // finish a quest from the server side and look at the toast and the claim button
+        // finish a quest from the server side and look at the toast and the claim button (edit mode swaps the player panel for the editor, so leave it first)
+        press("Edit");
         onClient(() -> ui().select("wood"));
         command("barelyquesting complete @p wood");
         Thread.sleep(1500);
         shot("claim_toast");
-        press("Claim all");
+        if (!pressed("Claim all")) throw new IllegalStateException("Claim all button missing for a completed quest");
         Thread.sleep(700);
         shot("claimed");
         onClient(() -> McGui.setScreen(null));
