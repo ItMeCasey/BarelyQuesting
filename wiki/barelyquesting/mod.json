@@ -1,0 +1,93 @@
+{
+  "name": "Barely Questing",
+  "tagline": "An in-game quest book for Forge and NeoForge: node graph or list, tasks, rewards, teams, themes, an editor and ModJS and KubeJS scripting.",
+  "icon": "images/icon.png",
+  "home": "home",
+  "minecraft": "1.20.1, 1.21.1, 26.1.2, 26.2, 26.3",
+  "loaders": "NeoForge, Forge",
+  "license": "Barely Questing is released under the MIT License.",
+  "links": [
+    {
+      "label": "Source",
+      "url": "https://github.com/ItMeCasey/BarelyQuesting"
+    },
+    {
+      "label": "Issues",
+      "url": "https://github.com/ItMeCasey/BarelyQuesting/issues"
+    }
+  ],
+  "nav": [
+    {
+      "title": "Getting started",
+      "pages": [
+        {
+          "slug": "home",
+          "title": "Barely Questing"
+        },
+        {
+          "slug": "install",
+          "title": "Install and versions"
+        },
+        {
+          "slug": "first-steps",
+          "title": "First steps"
+        }
+      ]
+    },
+    {
+      "title": "Using the book",
+      "pages": [
+        {
+          "slug": "quests",
+          "title": "Quests, tasks, rewards and locks"
+        },
+        {
+          "slug": "teams",
+          "title": "Teams"
+        },
+        {
+          "slug": "themes",
+          "title": "Themes"
+        },
+        {
+          "slug": "recipe-viewers",
+          "title": "Recipe viewers"
+        }
+      ]
+    },
+    {
+      "title": "Pack makers",
+      "pages": [
+        {
+          "slug": "editor",
+          "title": "The in-game editor"
+        },
+        {
+          "slug": "commands",
+          "title": "Commands"
+        },
+        {
+          "slug": "importing",
+          "title": "Importing FTB Quests and Better Questing"
+        },
+        {
+          "slug": "scripting",
+          "title": "Scripting with ModJS and KubeJS"
+        }
+      ]
+    },
+    {
+      "title": "Reference",
+      "pages": [
+        {
+          "slug": "versions",
+          "title": "Versions and known gaps"
+        },
+        {
+          "slug": "troubleshooting",
+          "title": "Troubleshooting"
+        }
+      ]
+    }
+  ]
+}
