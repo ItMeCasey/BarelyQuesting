@@ -58,8 +58,8 @@ public final class Viewers {
         Method open = Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("open", net.minecraft.world.item.Item.class, boolean.class);
         Method close = Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("close");
         Method isOpen = Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("isOpen");
-        var previous = mc.screen;
-        mc.setScreen(new net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<net.minecraft.world.inventory.InventoryMenu>(
+        var previous = McGui.screen();
+        McGui.setScreen(new net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<net.minecraft.world.inventory.InventoryMenu>(
                 mc.player.inventoryMenu, mc.player.getInventory(), net.minecraft.network.chat.Component.literal("Recipes")) {
             @Override public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor graphics, int x, int y, float tick) {
                 if (previous != null) previous.extractRenderState(graphics, x, y, tick);
@@ -69,7 +69,7 @@ public final class Viewers {
                 boolean open = ViewerDispatch.first(() -> (Boolean) isOpen.invoke(null));
                 if (!open) onClose();
             }
-            @Override public void onClose() { mc.setScreen(previous); }
+            @Override public void onClose() { McGui.setScreen(previous); }
             @Override public void removed() {
                 super.removed();
                 ViewerDispatch.first(() -> { close.invoke(null); return true; });
@@ -79,7 +79,7 @@ public final class Viewers {
             open.invoke(null, stack.getItem(), uses);
             return true;
         } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
-            mc.setScreen(previous);
+            McGui.setScreen(previous);
             throw e;
         }
     }

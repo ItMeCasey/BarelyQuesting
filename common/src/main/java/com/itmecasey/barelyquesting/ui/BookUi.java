@@ -185,9 +185,11 @@ public final class BookUi {
         statusLine(g, th);
         if (modal != null) {
             ui.clearZones();
+            g.raise();
             g.fill(0, 0, sw, sh, 0x90000000);
             modal.render(this, ui);
         }
+        g.raise();
         Hud.renderToasts(ui);
         ui.end();
     }

@@ -1,6 +1,7 @@
 package com.itmecasey.barelyquesting.dev;
 
 import com.itmecasey.barelyquesting.compat.ClientHooks;
+import com.itmecasey.barelyquesting.compat.McGui;
 import com.itmecasey.barelyquesting.compat.QuestScreen;
 import com.itmecasey.barelyquesting.theme.ThemeManager;
 import com.itmecasey.barelyquesting.ui.BookUi;
@@ -46,7 +47,7 @@ public final class Tour {
             while ((mc = Minecraft.getInstance()) == null) {
                 Thread.sleep(200);
             }
-            while (mc.level != null || mc.screen == null) {
+            while (mc.level != null || McGui.screen() == null) {
                 Thread.sleep(500);
             }
             Thread.sleep(5000);
@@ -57,7 +58,7 @@ public final class Tour {
                 mc.createWorldOpenFlows().createFreshLevel("bq_tour", settings, new WorldOptions(0L, false, false),
                         WorldPresets::createFlatWorldDimensions, new TitleScreen());
             });
-            while (!(mc.level != null && mc.player != null && mc.getSingleplayerServer() != null && mc.screen == null)) {
+            while (!(mc.level != null && mc.player != null && mc.getSingleplayerServer() != null && McGui.screen() == null)) {
                 Thread.sleep(500);
             }
             log("in the world");
@@ -81,7 +82,7 @@ public final class Tour {
     }
 
     private static BookUi ui() {
-        return ((QuestScreen) mc.screen).ui();
+        return ((QuestScreen) McGui.screen()).ui();
     }
 
     private static void press(String label) throws Exception {
@@ -134,10 +135,10 @@ public final class Tour {
         }
         if ("none".equals(System.getenv("BARELYQUESTING_VIEWER"))) {
             onClient(() -> {
-                var before = mc.screen;
+                var before = McGui.screen();
                 if (!com.itmecasey.barelyquesting.compat.Viewers.installed().isEmpty()
                         || com.itmecasey.barelyquesting.compat.Viewers.show(com.itmecasey.barelyquesting.core.model.ItemSpec.of("minecraft:oak_planks"), false)
-                        || mc.screen != before) throw new IllegalStateException("no-viewer fallback changed the screen");
+                        || McGui.screen() != before) throw new IllegalStateException("no-viewer fallback changed the screen");
             });
             log("INTEGRATION PASS no optional viewers; quest screen remains usable");
         } else if (System.getenv("BARELYQUESTING_VIEWER") != null) {
@@ -154,8 +155,8 @@ public final class Tour {
                         try {
                             Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("close").invoke(null);
                         } catch (ReflectiveOperationException e) { throw new IllegalStateException(e); }
-                        mc.screen.tick();
-                        if (!(mc.screen instanceof QuestScreen)) throw new IllegalStateException("BEI did not return to the quest screen");
+                        McGui.screen().tick();
+                        if (!(McGui.screen() instanceof QuestScreen)) throw new IllegalStateException("BEI did not return to the quest screen");
                         try {
                             if ((Boolean) Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("isOpen").invoke(null))
                                 throw new IllegalStateException("BEI left a stale popup");
@@ -213,7 +214,7 @@ public final class Tour {
         press("Claim all");
         Thread.sleep(700);
         shot("claimed");
-        onClient(() -> mc.setScreen(null));
+        onClient(() -> McGui.setScreen(null));
         onClient(() -> st.pinned.add("pickaxe"));
         command("barelyquesting complete @p bench");
         Thread.sleep(1500);

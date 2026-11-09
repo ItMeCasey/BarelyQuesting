@@ -1,0 +1,228 @@
+package com.itmecasey.barelyquesting.compat;
+
+import com.itmecasey.barelyquesting.core.model.ItemSpec;
+import com.itmecasey.barelyquesting.core.progress.PlayerView;
+import java.util.Map;
+import java.util.UUID;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stat;
+import net.minecraft.stats.StatType;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.structure.Structure;
+
+/** The engine's view of a real player on a running server. */
+public final class McPlayer implements PlayerView {
+    private final ServerPlayer player;
+
+    public McPlayer(ServerPlayer player) {
+        this.player = player;
+    }
+
+    public ServerPlayer player() {
+        return player;
+    }
+
+    private ServerLevel level() {
+        return player.serverLevel();
+    }
+
+    @Override
+    public UUID uuid() {
+        return player.getUUID();
+    }
+
+    @Override
+    public String name() {
+        return player.getName().getString();
+    }
+
+    @Override
+    public int countItems(ItemSpec spec) {
+        Inventory inv = player.getInventory();
+        int n = 0;
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack s = inv.getItem(i);
+            if (Mc.matches(spec, s, level().registryAccess())) {
+                n += s.getCount();
+            }
+        }
+        return n;
+    }
+
+    @Override
+    public int takeItems(ItemSpec spec, int max) {
+        Inventory inv = player.getInventory();
+        int left = max;
+        for (int i = 0; i < inv.getContainerSize() && left > 0; i++) {
+            ItemStack s = inv.getItem(i);
+            if (Mc.matches(spec, s, level().registryAccess())) {
+                int take = Math.min(left, s.getCount());
+                s.shrink(take);
+                left -= take;
+            }
+        }
+        if (left < max && player.connection != null) {
+            player.containerMenu.broadcastChanges();
+        }
+        return max - left;
+    }
+
+    @Override
+    public void giveItem(ItemSpec spec) {
+        ItemStack stack = Mc.stack(spec, level().registryAccess(), 0);
+        int total = Math.max(1, spec.count());
+        while (total > 0 && !stack.isEmpty()) {
+            int n = Math.min(total, stack.getMaxStackSize());
+            ItemStack part = copyOf(stack, n);
+            if (player.connection != null) {
+                player.getInventory().placeItemBackInInventory(part);
+            } else {
+                player.getInventory().add(part);
+                if (!part.isEmpty()) {
+                    player.drop(part, false);
+                }
+            }
+            total -= n;
+        }
+    }
+
+    private static ItemStack copyOf(ItemStack stack, int count) {
+        ItemStack copy = stack.copy();
+        copy.setCount(count);
+        return copy;
+    }
+
+    @Override
+    public void addExperiencePoints(int points) {
+        player.giveExperiencePoints(points);
+    }
+
+    @Override
+    public void addExperienceLevels(int levels) {
+        player.giveExperienceLevels(levels);
+    }
+
+    @Override
+    public void runCommand(String command) {
+        var server = level().getServer();
+        var source = player.createCommandSourceStack().withPermission(4).withSuppressedOutput();
+        server.getCommands().performPrefixedCommand(source, command);
+    }
+
+    @Override
+    public String dimension() {
+        return level().dimension().location().toString();
+    }
+
+    @Override
+    public String biome() {
+        return level().getBiome(player.blockPosition()).unwrapKey().map(k -> k.location().toString()).orElse("");
+    }
+
+    @Override
+    public double x() {
+        return player.getX();
+    }
+
+    @Override
+    public double y() {
+        return player.getY();
+    }
+
+    @Override
+    public double z() {
+        return player.getZ();
+    }
+
+    @Override
+    public boolean inStructure(String structureId) {
+        ServerLevel level = level();
+        BlockPos pos = player.blockPosition();
+        var registry = level.registryAccess().registryOrThrow(Registries.STRUCTURE);
+        ResourceLocation wanted = Mc.id(structureId);
+        for (Map.Entry<Structure, ?> e : level.structureManager().getAllStructuresAt(pos).entrySet()) {
+            ResourceLocation key = registry.getKey(e.getKey());
+            if (wanted.equals(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasAdvancement(String id) {
+        Advancement holder = level().getServer().getAdvancements().getAdvancement(Mc.id(id));
+        return holder != null && player.getAdvancements().getOrStartProgress(holder).isDone();
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public long statistic(String type, String key) {
+        try {
+            ResourceLocation id = Mc.id(key);
+            Stat<?> stat;
+            switch (type) {
+                case "custom":
+                    stat = Stats.CUSTOM.get(id);
+                    break;
+                case "mined":
+                    stat = stat(Stats.BLOCK_MINED, BuiltInRegistries.BLOCK.get(id));
+                    break;
+                case "crafted":
+                    stat = stat(Stats.ITEM_CRAFTED, BuiltInRegistries.ITEM.get(id));
+                    break;
+                case "used":
+                    stat = stat(Stats.ITEM_USED, BuiltInRegistries.ITEM.get(id));
+                    break;
+                case "broken":
+                    stat = stat(Stats.ITEM_BROKEN, BuiltInRegistries.ITEM.get(id));
+                    break;
+                case "picked_up":
+                    stat = stat(Stats.ITEM_PICKED_UP, BuiltInRegistries.ITEM.get(id));
+                    break;
+                case "dropped":
+                    stat = stat(Stats.ITEM_DROPPED, BuiltInRegistries.ITEM.get(id));
+                    break;
+                case "killed":
+                    stat = stat(Stats.ENTITY_KILLED, BuiltInRegistries.ENTITY_TYPE.get(id));
+                    break;
+                case "killed_by":
+                    stat = stat(Stats.ENTITY_KILLED_BY, BuiltInRegistries.ENTITY_TYPE.get(id));
+                    break;
+                default:
+                    return 0;
+            }
+            return player.getStats().getValue(stat);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    private static <T> Stat<T> stat(StatType<T> type, T value) {
+        return type.get(value);
+    }
+
+    @Override
+    public void message(String text) {
+        player.sendSystemMessage(Component.literal(text));
+    }
+
+    @Override
+    public boolean isOperator() {
+        return player.hasPermissions(2);
+    }
+
+    @Override
+    public boolean isCreative() {
+        return player.isCreative();
+    }
+}

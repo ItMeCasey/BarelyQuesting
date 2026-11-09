@@ -56,6 +56,10 @@ public interface Gfx {
     /** Plays a UI sound by registry id, e.g. {@code minecraft:ui.button.click}. */
     void sound(String soundId, float pitch);
 
+    /** Lifts everything drawn after this call above what was drawn before (versions that order by depth need it). */
+    default void raise() {
+    }
+
     /** Selects the font for following text; an empty id means the default font. */
     default void font(String fontId) {
     }

@@ -77,7 +77,7 @@ def check(layer):
     t.join(timeout=5)
     out = "\n".join(log)
     (run / "server_check.log").write_text(out, encoding="utf-8")
-    mod_seen = bool(re.search(r"mod:barelyquesting|\(barelyquesting\)|Loading mod barelyquesting|\[(?:[\w.]+\.)?BarelyQuesting/\]", out))
+    mod_seen = bool(re.search(r"mod:barelyquesting|Barely Questing: \d+ quests|\(barelyquesting\)|Loading mod barelyquesting|\[(?:[\w.]+\.)?BarelyQuesting/\]", out))
     errors = [l for l in log if ERROR_WORDS.search(l) or OWN_ERROR.search(l)]
     if not done:
         # Show why, so a CI log is enough to see what went wrong.

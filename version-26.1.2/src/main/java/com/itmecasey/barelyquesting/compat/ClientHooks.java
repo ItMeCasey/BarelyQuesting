@@ -43,7 +43,7 @@ public final class ClientHooks {
     public static void clientTick() {
         Minecraft mc = Minecraft.getInstance();
         while (Holder.OPEN.consumeClick()) {
-            if (mc.player != null && mc.screen == null) {
+            if (mc.player != null && McGui.screen() == null) {
                 openBook(null);
             }
         }
@@ -63,12 +63,12 @@ public final class ClientHooks {
             st.hello();
         }
         ClientState.get().playSound("open");
-        mc.setScreen(new QuestScreen(quest));
+        McGui.setScreen(new QuestScreen(quest));
     }
 
     public static void hud(GuiGraphicsExtractor graphics) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.options.hideGui || mc.screen instanceof QuestScreen) {
+        if (McGui.screen() instanceof QuestScreen) {
             return;
         }
         Hud.render(new GfxImpl(graphics));

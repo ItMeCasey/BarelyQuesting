@@ -1,7 +1,7 @@
 plugins {
-    id 'java-library'
     id 'idea'
-    id 'net.neoforged.gradle.userdev' version '7.0.192'
+    id 'java-library'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.91'
 }
 
 version = mod_version
@@ -13,19 +13,51 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-// NeoForge 1.20.1 keeps the Forge packages, so it compiles the Forge 1.20.1 layer too; shared code comes from ../common.
+// NeoForge 1.20.1 keeps the Forge 1.20.1 packages, so it compiles the Forge loader layer too; shared code comes from ../common.
 sourceSets {
     main {
         java.srcDir '../version-1.20.1/src/main/java'
         java.srcDir '../forge-1.20.1/src/main/java'
         java.srcDir '../common/src/main/java'
         if (project.hasProperty('devTools')) { java.srcDir '../common/src/dev/java'; java.srcDir '../version-1.20.1/src/dev/java' }  // dev tools (self test, tour), never in releases
+        resources.srcDir '../forge-1.20.1/src/main/resources'
         resources.srcDir '../common/src/main/resources'
     }
 }
 
-dependencies {
-    implementation "net.neoforged:forge:${minecraft_version}-${neo_version}"
+legacyForge {
+    // NeoForge's 1.20.1 fork of Forge 47 keeps the net.minecraftforge packages.
+    enable {
+        neoForgeVersion = project.minecraft_version + '-' + project.neo_version
+    }
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.minecraft_version
+    }
+
+    runs {
+        configureEach {
+            gameDirectory = layout.projectDirectory.dir('run')
+        }
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 // The Forge 1.20.1 mods.toml works for NeoForge 1.20.1 as well: it names the forge dependency, which NeoForge keeps.
@@ -41,10 +73,7 @@ var generateModMetadata = tasks.register('generateModMetadata', ProcessResources
     into 'build/generated/sources/modMetadata'
 }
 sourceSets.main.resources.srcDir generateModMetadata
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
+legacyForge.ideSyncTask generateModMetadata
 
 // Unit tests for the shared logic in ../common. They need no running game.
 sourceSets.test.java.srcDir '../common/src/test/java'
