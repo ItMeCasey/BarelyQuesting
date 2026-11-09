@@ -102,6 +102,9 @@ public final class Tour {
         log("connected=" + st.connected + " canEdit=" + st.canEdit + " chapters=" + st.book.chapters.size());
 
 
+        onClient(() -> ClientHooks.openBook(null));
+        Thread.sleep(2500);
+        shot("graph");
         onClient(() -> ui().select("bench"));
         Thread.sleep(700);
         shot("graph_selected");
@@ -151,6 +154,14 @@ public final class Tour {
         command("barelyquesting complete @p bench");
         Thread.sleep(1500);
         shot("hud");
+        // the viewer shortcut's lookup: open the quest that crafts a wooden pickaxe
+        onClient(() -> {
+            if (!com.itmecasey.barelyquesting.compat.ItemQuestKey.openForItem("minecraft:wooden_pickaxe")) {
+                throw new IllegalStateException("no quest found for the wooden pickaxe");
+            }
+        });
+        Thread.sleep(900);
+        shot("item_quest");
     }
 
     private static void command(String text) throws Exception {

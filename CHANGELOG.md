@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.11.3
+
+- Ctrl+J over an item in a recipe viewer (JEI, REI, EMI, BEI) or an inventory slot opens the quest that asks for, rewards or shows that item.
+- Client tours now exist for 1.20.1 and 1.21.1 and every build has been run once on a real client.
+
 ## 2026.11.2
 
 - Added the craftable Quest Book item (a book and a gold nugget, shapeless). Right-click opens the book; it has its own creative tab.

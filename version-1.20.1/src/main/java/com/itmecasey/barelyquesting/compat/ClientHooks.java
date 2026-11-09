@@ -41,6 +41,7 @@ public final class ClientHooks {
 
     public static void clientTick() {
         Minecraft mc = Minecraft.getInstance();
+        ItemQuestKey.tick();
         while (Holder.OPEN.consumeClick()) {
             if (mc.player != null && McGui.screen() == null) {
                 openBook(null);

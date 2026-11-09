@@ -103,6 +103,9 @@ public final class Tour {
         log("connected=" + st.connected + " canEdit=" + st.canEdit + " chapters=" + st.book.chapters.size());
 
 
+        onClient(() -> ClientHooks.openBook(null));
+        Thread.sleep(2500);
+        shot("graph");
         onClient(() -> ui().select("bench"));
         Thread.sleep(700);
         shot("graph_selected");
@@ -140,6 +143,12 @@ public final class Tour {
 
         // finish a quest from the server side and look at the toast and the claim button (edit mode swaps the player panel for the editor, so leave it first)
         press("Edit");
+        server.execute(() -> {
+            var source = server.getPlayerList().getPlayers().get(0).createCommandSourceStack();
+            var dispatcher = server.getCommands().getDispatcher();
+            log("level " + (source.hasPermission(2) ? "op" : "not op") + ", usage: " + String.join(" | ", dispatcher.getAllUsage(dispatcher.getRoot().getChild("barelyquesting"), source, false)));
+        });
+        Thread.sleep(500);
         onClient(() -> ui().select("wood"));
         command("barelyquesting complete @p wood");
         Thread.sleep(1500);
@@ -152,6 +161,14 @@ public final class Tour {
         command("barelyquesting complete @p bench");
         Thread.sleep(1500);
         shot("hud");
+        // the viewer shortcut's lookup: open the quest that crafts a wooden pickaxe
+        onClient(() -> {
+            if (!com.itmecasey.barelyquesting.compat.ItemQuestKey.openForItem("minecraft:wooden_pickaxe")) {
+                throw new IllegalStateException("no quest found for the wooden pickaxe");
+            }
+        });
+        Thread.sleep(900);
+        shot("item_quest");
     }
 
     private static void command(String text) throws Exception {
