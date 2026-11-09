@@ -49,6 +49,6 @@ Spend: none
 - [x] Branding, listing text, CurseForge description (branding/, curseforge/DESCRIPTION.md) (w:2)
 - [x] Wiki pages written (wiki/barelyquesting; not deployed) (w:3)
 - [x] README, CHANGELOG, compatibility and known-gaps docs (w:2)
-- [ ] Pushed to GitHub, CI green, released (w:3)
+- [~] Pushed to GitHub (public repo, CurseForge token set); CI running, not released (w:3)
 - [ ] CurseForge project created and first release uploaded (w:2)
-- [ ] Wiki deployed to itmecasey.com (w:1)
+- [x] Wiki deployed to itmecasey.com (live, pages return 200) (w:1)
