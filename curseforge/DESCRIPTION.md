@@ -28,12 +28,6 @@ Turn on Edit in the book (operators, creative players and names on the editor li
 
 With ModJS or KubeJS installed, scripts get a `BarelyQuesting` object: create chapters and quests, register task, reward and lock types, listen for `questStarted`, `taskProgressed`, `questCompleted` and `questClaimed`, and complete quests. Neither is required.
 
-![Install](https://raw.githubusercontent.com/ItMeCasey/BarelyQuesting/main/branding/banners/h_install.png)
-
-One jar per loader and Minecraft version: Forge and NeoForge for 1.20.1, 1.21.1, 26.1.2, 26.2 and 26.3. Put it in `mods/` on the server and on every client. No other mod is needed.
-
-**Tested:** all ten builds start a dedicated server and pass a self test with a real player. The screen, themes, editor and viewer clicks were run on a real client on NeoForge 26.1.2 only; the other builds are not yet seen in a real client.
-
 ![FAQ](https://raw.githubusercontent.com/ItMeCasey/BarelyQuesting/main/branding/banners/h_faq.png)
 
 **Does it need FTB Quests or Better Questing?** No. It can import their books once and has no runtime link to them.
