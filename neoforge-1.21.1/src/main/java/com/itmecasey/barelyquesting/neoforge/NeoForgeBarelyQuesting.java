@@ -14,6 +14,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 @Mod("barelyquesting")
 public final class NeoForgeBarelyQuesting {
     public NeoForgeBarelyQuesting(IEventBus modBus) {
+        QuestItems.register(modBus);
         Mc.configDir = FMLPaths.CONFIGDIR.get();
         Mc.toPlayer = (ServerPlayer player, byte[] message) -> PacketDistributor.sendToPlayer(player, new QuestPayload(message));
         com.itmecasey.barelyquesting.core.script.Bridges.install(FMLPaths.GAMEDIR.get());

@@ -21,6 +21,7 @@ sourceSets {
         java.srcDir '../common/src/main/java'
         if (project.hasProperty('devTools')) { java.srcDir '../common/src/dev/java'; java.srcDir '../version-1.20.1/src/dev/java' }  // dev tools (self test, tour), never in releases
         resources.srcDir '../forge-1.20.1/src/main/resources'
+        resources.srcDir '../version-1.20.1/src/main/resources'
         resources.srcDir '../common/src/main/resources'
     }
 }

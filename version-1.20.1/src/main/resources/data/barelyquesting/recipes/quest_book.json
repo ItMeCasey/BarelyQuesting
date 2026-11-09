@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {"item": "minecraft:book"},
+    {"item": "minecraft:gold_nugget"}
+  ],
+  "result": {"item": "barelyquesting:quest_book"}
+}

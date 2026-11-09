@@ -28,7 +28,6 @@ sourceSets.main.output.resourcesDir = sourceSets.main.java.destinationDirectory.
 
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
-    reobf = false
     copyIdeResources = true
 
     runs {
@@ -59,6 +58,9 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 }
+
+// 1.20.1 runs on SRG names, so the released jar is remapped (a dev run does not need it, a real game crashes without it).
+tasks.named('jar').configure { finalizedBy 'reobfJar' }
 
 var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
     var replaceProperties = [

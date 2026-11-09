@@ -29,7 +29,7 @@ The mod adds no blocks or entities, so SMWTI and Jade have nothing to show.
 
 ## Known gaps
 
-- The craftable Quest Book item from the design brief is not built; the book opens with the J key and `/barelyquesting open`.
+- The Quest Book item (2026.11.2) is registered on all ten builds and compiles and loads in the headless test, but it has not been held in a real client.
 - A viewer button that opens the quest for an item is not built.
 - The editor's item picker lists registry items; it is not backed by JEI or BEI's own search.
 - The 1.20.1 and 1.21.1 screens draw by depth instead of by layer; their frames have not been looked at.

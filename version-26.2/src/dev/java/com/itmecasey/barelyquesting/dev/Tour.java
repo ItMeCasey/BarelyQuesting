@@ -47,7 +47,7 @@ public final class Tour {
             while ((mc = Minecraft.getInstance()) == null) {
                 Thread.sleep(200);
             }
-            while (mc.level != null || McGui.screen() == null) {
+            while (mc.gui == null || mc.level != null || McGui.screen() == null) {
                 Thread.sleep(500);
             }
             Thread.sleep(5000);

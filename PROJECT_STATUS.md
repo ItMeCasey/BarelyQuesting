@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-09
-Summary: Barely Questing 2026.11.1 builds for all ten Forge and NeoForge targets (1.20.1, 1.21.1, 26.1.2, 26.2, 26.3) and every build passes the headless dedicated-server self test; the screen, editor, themes, HUD, viewer clicks and ModJS/KubeJS bridges were checked on a real client on NeoForge 26.1.2 only; the repo is public and pushed, tag v2026.11.1 and the GitHub prerelease exist, the wiki is live, and ten beta files are uploaded to CurseForge project 1794334 awaiting review and Casey's approval (the PM owns further tags and releases).
+Summary: Barely Questing 2026.11.2 (unreleased, built locally; 2026.11.1 is released) builds for all ten Forge and NeoForge targets (1.20.1, 1.21.1, 26.1.2, 26.2, 26.3) and every build passes the headless dedicated-server self test; the screen, editor, themes, HUD, viewer clicks and ModJS/KubeJS bridges were checked on a real client on NeoForge 26.1.2 only; the repo is public and pushed, tag v2026.11.1 and the GitHub prerelease exist, the wiki is live, and ten beta files are uploaded to CurseForge project 1794334 awaiting review and Casey's approval (the PM owns further tags and releases).
 Spend: none
 
 ## Foundation
@@ -21,11 +21,12 @@ Spend: none
 ## Client UI
 - [~] UI toolkit and book screen (unit-tested layout and input; real client on NeoForge 26.1.2 only) (w:5)
 - [~] List view and node-graph view (frames read on NeoForge 26.1.2 only) (w:5)
-- [~] Quest detail, rich text, claim UI (NeoForge 26.1.2 frames; claim button action failed once in an earlier tour run and was not re-run) (w:3)
+- [~] Quest detail, rich text, claim UI (NeoForge 26.1.2 only; the earlier claim failure was the tour leaving edit mode on, fixed and re-run: Claim all pressed and 8 apples claimed, frames in docs/frames) (w:3)
 - [~] Theme system with default and parchment themes, F3+T reload (both themes seen on NeoForge 26.1.2; the reload key not pressed) (w:4)
 - [~] In-game editor with undo and redo, item picker (unit-tested; edit mode, add and undo seen on NeoForge 26.1.2) (w:5)
 - [~] Commands, HUD tracker, toasts (HUD and toasts seen on NeoForge 26.1.2; command tree checked headless on all ten) (w:3)
-- [ ] Craftable Quest Book item and a viewer button that opens a quest (not built; listed as known gaps) (w:2)
+- [~] Craftable Quest Book item (registered, creative tab, recipe, model on all ten builds; compiles, unit tests pass, jars contain it; not held in a real client) (w:2)
+- [ ] Viewer button that opens a quest for an item (not built; Casey said leave out for now) (w:1)
 
 ## Integrations
 - [~] ModJS bridge (real JavaScript test against a stand-in; real client on NeoForge 26.1.2 with a ModJS development snapshot) (w:3)
@@ -36,7 +37,7 @@ Spend: none
 ## Ports
 - [~] Forge 26.1.2, NeoForge and Forge 26.2 and 26.3 (compile, unit tests and 33 headless checks pass; screens not seen on a real client) (w:4)
 - [~] NeoForge and Forge 1.21.1 (compile and 33 headless checks pass; GuiGraphics layering and tooltip queue not seen on a real client) (w:3)
-- [~] NeoForge and Forge 1.20.1 (compile and 33 headless checks pass; screens not seen on a real client) (w:3)
+- [~] NeoForge and Forge 1.20.1 (compile and 33 headless checks pass on 2026.11.1; Forge jar now reobfuscated: 220 SRG names in the 2026.11.2 jar, was 0; screens not seen on a real client) (w:3)
 
 ## Testing
 - [x] Unit tests for common/ in all ten modules (w:3)

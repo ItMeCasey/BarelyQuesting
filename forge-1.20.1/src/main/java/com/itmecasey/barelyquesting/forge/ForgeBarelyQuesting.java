@@ -20,6 +20,7 @@ public final class ForgeBarelyQuesting {
     static SimpleChannel channel;
 
     public ForgeBarelyQuesting() {
+        QuestItems.register(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus());
         Mc.configDir = FMLPaths.CONFIGDIR.get();
         Bridges.install(FMLPaths.GAMEDIR.get());
         channel = NetworkRegistry.ChannelBuilder.named(Mc.id("barelyquesting", "main"))

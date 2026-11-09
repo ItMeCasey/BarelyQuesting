@@ -13,7 +13,7 @@ All ten builds compile, run the shared unit tests and pass a headless dedicated-
 
 ## Known gaps
 
-- No craftable Quest Book item yet; use J or `/barelyquesting open`.
+- The Quest Book item (a book and a gold nugget) is new in 2026.11.2 and has not been tried in a real client. J and `/barelyquesting open` always work.
 - No viewer button that opens the quest for an item.
 - The editor's item picker lists registry items; it is not driven by JEI or BEI search.
 - KubeJS support is a helper script, not a native plugin, and KubeJS has no build for 26.2, 26.3, or Forge 1.21.1 and 26.x. EMI has no build for 26.1.2 to test with.
