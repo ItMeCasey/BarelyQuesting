@@ -1,11 +1,14 @@
 # Changelog
 
+## 2026.11.5
+
+- Recipe viewers: BEI now opens from the quest panel on the 1.20.1 and 1.21.1 builds too (it was only wired on 26.x). Recipe and usage clicks and the Ctrl+J hover read were checked on real clients with JEI, REI, EMI and BEI on every 1.20.1 and 1.21.1 loader where that viewer exists.
+
 ## 2026.11.4
 
 - Importers: Better Questing exports that keep one JSON file per quest and quest line (`DefaultQuests/Quests/...`, `QuestLines/...`) now import; FTB Quests colour codes such as `&a` no longer show in chapter and quest titles. Both found by importing real exported books.
 - Scripts: `BarelyQuesting.clearListeners()` so a KubeJS or ModJS script reload replaces listeners instead of adding copies.
 - Checked on real clients on all ten builds: theme switch with a resource reload, editor undo/redo and item picker, commands, HUD and toast, the Quest Book item held in hand, Ctrl+J over an inventory slot, and team create, invite, join, shared progress and disband. Location, dimension, biome, structure and checkmark tasks were exercised in a live world on one build per Minecraft version.
-- Recipe viewers: BEI now opens from the quest panel on the 1.20.1 and 1.21.1 builds too (it was only wired on 26.x). Recipe and usage clicks and the Ctrl+J hover read were checked on real clients with JEI, REI, EMI and BEI on every 1.20.1 and 1.21.1 loader where that viewer exists.
 - The item picker takes Enter to choose the first match.
 
 ## 2026.11.3
