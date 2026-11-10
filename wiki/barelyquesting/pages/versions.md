@@ -14,8 +14,8 @@ All ten builds compile, run the shared unit tests and pass a headless dedicated-
 ## Known gaps
 
 - The Quest Book item (a book and a gold nugget) is new in 2026.11.2 and has not been tried in a real client. J and `/barelyquesting open` always work.
-- Ctrl+J over an item opens its quest. The lookup was checked; picking the hovered item out of JEI, REI, EMI and BEI was not tried in a live viewer.
+- Ctrl+J over an item opens its quest. Checked over an inventory slot on every build and over JEI, REI and BEI overlays on NeoForge 26.1.2; EMI is untested.
 - The editor's item picker lists registry items; it is not driven by JEI or BEI search.
 - KubeJS support is a helper script, not a native plugin, and KubeJS has no build for 26.2, 26.3, or Forge 1.21.1 and 26.x. EMI has no build for 26.1.2 to test with.
 - BEI lookups are wired on the 26.x builds only.
-- Multiplayer with two real clients has not been run; the server and wire format are unit tested.
+- Multiplayer with two real clients has not been run; a second player is simulated through the server API (unit tests, and team create, invite, join, shared completion and disband in a real client).

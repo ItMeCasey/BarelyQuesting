@@ -68,6 +68,7 @@ sourceSets.main.resources.srcDir generateModMetadata
 
 // Unit tests for the shared logic in ../common. They need no running game.
 sourceSets.test.java.srcDir '../common/src/test/java'
+sourceSets.test.resources.srcDir '../common/src/test/resources'
 repositories { mavenCentral() }
 dependencies {
     testImplementation platform("org.junit:junit-bom:5.11.4")

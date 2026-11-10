@@ -6,6 +6,9 @@ import net.minecraft.client.gui.screens.Screen;
 
 /** Client only: the open screen. Its home on Minecraft moved between versions, so every version module has its own copy. */
 public final class McGui {
+    /** Keys the development tour holds down without touching the OS keyboard; empty in normal play. */
+    public static final java.util.Set<Integer> forcedKeys = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
     private McGui() {
     }
 
@@ -19,6 +22,6 @@ public final class McGui {
 
     /** Whether the key (a GLFW key code) is held right now, even while a screen is open. */
     public static boolean keyDown(int key) {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key);
+        return forcedKeys.contains(key) || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key);
     }
 }

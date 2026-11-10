@@ -4,7 +4,7 @@ Validated on 2026-11-08 with NeoForge 26.1.2.125 and Java 25. Other loader/versi
 
 | Integration | Version tested | Result |
 | --- | --- | --- |
-| ModJS | 2026.11.30 development snapshot | Real client: startup definition, reset-and-poll callback completion and client progress sync passed; screenshot inspected. Dedicated server: all 35 checks passed. |
+| ModJS | 2026.11.31 (sha256 c9944fde5c545cca323ee5edcce064a856b242b3ccc13c09052404cfe2818af0; the 2026.11.30 snapshot passed the same check earlier) | Real client: startup definition, reset-and-poll callback completion and client progress sync passed; screenshot inspected. Dedicated server: all 35 checks passed. |
 | KubeJS | 26.1.2-8.0.8 | Real client: helper loading, startup quest creation, callback completion and client sync passed. |
 | BEI | 2026.11.7 | Real client: recipes, usages, popup cleanup and return to the quest book all passed; screenshots inspected. |
 | JEI | 29.53.0.115 | Real client: oak plank recipes and usages opened correctly; both screenshots inspected. |

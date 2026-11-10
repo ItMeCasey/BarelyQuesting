@@ -13,7 +13,7 @@ for v in "${VERSIONS[@]}"; do
   jars=()
   for loader in neoforge forge; do
     echo "=== $loader-$v"
-    if ! (cd "$loader-$v" && chmod +x gradlew && ./gradlew build --no-daemon -q 2>&1 | grep -v "Started working\|REUSE\|DONE\|Total runtime\|^WARNING"); then :; fi
+    if ! (cd "$loader-$v" && chmod +x gradlew && ./gradlew build --no-daemon --max-workers=4 -Dorg.gradle.jvmargs=-Xmx2g -q 2>&1 | grep -v "Started working\|REUSE\|DONE\|Total runtime\|^WARNING"); then :; fi
     jar=$(ls "$loader-$v"/build/libs/barelyquesting-$loader-mc$v-$MODVER.jar 2>/dev/null)
     if [ -z "$jar" ]; then echo "FAILED: no jar for $loader-$v"; fail=1; else jars+=("$jar"); fi
   done

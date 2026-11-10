@@ -10,7 +10,7 @@ The global `BarelyQuesting` is available in every script type. Quests made in st
 
 ## KubeJS
 
-Barely Questing writes `kubejs/startup_scripts/barelyquesting.js` once, which sets `global.BarelyQuesting`. Use `global.BarelyQuesting` in your scripts. Restart after changing callback registrations; they are not cleaned up on a script reload.
+Barely Questing writes `kubejs/startup_scripts/barelyquesting.js` once, which sets `global.BarelyQuesting`. Use `global.BarelyQuesting` in your scripts. Task, reward and lock types are replaced by name when a script registers them again. Event listeners add up, so start a server script that registers listeners with `global.BarelyQuesting.clearListeners()`: after a reload it then replaces the old listeners instead of doubling them.
 
 ## What you can do
 

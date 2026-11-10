@@ -373,6 +373,18 @@ public final class Modals {
             if (key == Keys.ESCAPE) {
                 return false;
             }
+            if ((key == Keys.ENTER || key == Keys.KP_ENTER) && !count.focused) {
+                if (tagMode && !tag.text().trim().isEmpty()) {
+                    b.closeModal();
+                    choose.accept(new ItemSpec(tag.text().trim().replace("#", ""), amount(), true, null, false));
+                    return true;
+                }
+                if (!tagMode && !filtered.isEmpty()) {
+                    b.closeModal();
+                    choose.accept(new ItemSpec(filtered.get(0), amount(), false, current.data(), current.matchData()));
+                    return true;
+                }
+            }
             TextEditor ed = count.focused ? count : active();
             return ed.keyPressed(key, mods, g);
         }

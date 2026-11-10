@@ -27,7 +27,7 @@ import net.minecraft.world.level.levelgen.presets.WorldPresets;
  * the screen's own handlers (never the OS cursor), saves screenshots into run/ and quits. Progress goes to the log as BQ-TOUR lines.
  */
 public final class Tour {
-    private static Minecraft mc;
+    static Minecraft mc;
 
     private Tour() {
     }
@@ -38,7 +38,12 @@ public final class Tour {
         t.start();
     }
 
-    private static void log(String s) {
+    static boolean normalWorld() {
+        String only = System.getenv("BARELYQUESTING_TASKS_ONLY");
+        return only != null && !only.equals("jkey");
+    }
+
+    static void log(String s) {
         System.out.println("BQ-TOUR " + s);
     }
 
@@ -55,8 +60,8 @@ public final class Tour {
             onClient(() -> {
                 LevelSettings settings = new LevelSettings("bq_tour", GameType.CREATIVE,
                         new LevelSettings.DifficultySettings(Difficulty.PEACEFUL, false, false), true, WorldDataConfiguration.DEFAULT);
-                mc.createWorldOpenFlows().createFreshLevel("bq_tour", settings, new WorldOptions(0L, false, false),
-                        WorldPresets::createFlatWorldDimensions, new TitleScreen());
+                mc.createWorldOpenFlows().createFreshLevel("bq_tour", settings, new WorldOptions(0L, normalWorld(), false),
+                        registries -> normalWorld() ? WorldPresets.createNormalWorldDimensions(registries) : WorldPresets.createFlatWorldDimensions(registries), new TitleScreen());
             });
             while (!(mc.level != null && mc.player != null && mc.getSingleplayerServer() != null && McGui.screen() == null)) {
                 Thread.sleep(500);
@@ -81,15 +86,15 @@ public final class Tour {
         }
     }
 
-    private static BookUi ui() {
+    static BookUi ui() {
         return ((QuestScreen) McGui.screen()).ui();
     }
 
-    private static void press(String label) throws Exception {
+    static void press(String label) throws Exception {
         pressed(label);
     }
 
-    private static boolean pressed(String label) throws Exception {
+    static boolean pressed(String label) throws Exception {
         boolean[] ok = {false};
         onClient(() -> ok[0] = ui().press(label));
         log("press " + label + " -> " + ok[0]);
@@ -100,6 +105,10 @@ public final class Tour {
     private static void tour() throws Exception {
         MinecraftServer server = mc.getSingleplayerServer();
         ClientState st = ClientState.get();
+        if (System.getenv("BARELYQUESTING_TASKS_ONLY") != null) {
+            Tour2.tasksOnly();
+            return;
+        }
         log("connected=" + st.connected + " canEdit=" + st.canEdit + " chapters=" + st.book.chapters.size());
 
         if (System.getenv("BARELYQUESTING_INTEGRATIONS") != null) {
@@ -174,6 +183,20 @@ public final class Tour {
             }
         }
 
+        if (System.getenv("BARELYQUESTING_KUBEJS_RELOAD") != null) {
+            command("reload");
+            Thread.sleep(3000);
+            command("reload");
+            Thread.sleep(3000);
+            command("barelyquesting reset @p wood");
+            command("barelyquesting complete @p wood");
+            Thread.sleep(1500);
+            log("KUBEJS RELOAD DONE");
+        }
+        if (System.getenv("BARELYQUESTING_HOVER") != null) {
+            Tour2.hover(System.getenv("BARELYQUESTING_VIEWER"));
+            if (System.getenv("BARELYQUESTING_INTEGRATION_ONLY") != null) return;
+        }
         if (System.getenv("BARELYQUESTING_INTEGRATION_ONLY") != null) return;
 
         onClient(() -> ui().select("bench"));
@@ -217,7 +240,16 @@ public final class Tour {
         command("barelyquesting complete @p wood");
         Thread.sleep(1500);
         shot("claim_toast");
-        if (!pressed("Claim all")) throw new IllegalStateException("Claim all button missing for a completed quest");
+        boolean claimed = false;
+        for (int attempt = 0; attempt < 12 && !claimed; attempt++) {
+            claimed = pressed("Claim all");
+            if (!claimed) {
+                Thread.sleep(700);
+            }
+        }
+        if (!claimed) {
+            throw new IllegalStateException("Claim all button missing for a completed quest");
+        }
         Thread.sleep(700);
         shot("claimed");
         onClient(() -> McGui.setScreen(null));
@@ -233,9 +265,10 @@ public final class Tour {
         });
         Thread.sleep(900);
         shot("item_quest");
+        Tour2.run();
     }
 
-    private static void command(String text) throws Exception {
+    static void command(String text) throws Exception {
         MinecraftServer server = mc.getSingleplayerServer();
         CompletableFuture<Void> done = new CompletableFuture<>();
         server.execute(() -> {
@@ -249,7 +282,7 @@ public final class Tour {
         Thread.sleep(100);
     }
 
-    private static void onClient(Runnable r) throws Exception {
+    static void onClient(Runnable r) throws Exception {
         CompletableFuture<Void> done = new CompletableFuture<>();
         mc.execute(() -> {
             try {
@@ -259,10 +292,10 @@ public final class Tour {
                 done.completeExceptionally(t);
             }
         });
-        done.get(15, TimeUnit.SECONDS);
+        done.get(60, TimeUnit.SECONDS);
     }
 
-    private static void shot(String name) throws Exception {
+    static void shot(String name) throws Exception {
         log("shot " + name);
         CompletableFuture<Void> done = new CompletableFuture<>();
         String file = "bq_" + name + ".png";
@@ -289,7 +322,7 @@ public final class Tour {
                 throw new IllegalStateException(e);
             }
         });
-        done.get(15, TimeUnit.SECONDS);
+        done.get(60, TimeUnit.SECONDS);
         log("saved " + new File(mc.gameDirectory, "screenshots/" + file));
     }
 }

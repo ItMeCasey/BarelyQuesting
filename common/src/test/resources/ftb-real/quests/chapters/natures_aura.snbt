@@ -1,0 +1,56 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "natures_aura"
+	group: "1000000000000002"
+	icon: "naturesaura:nature_altar"
+	id: "3005000000000001"
+	images: []
+	order_index: 4
+	quest_links: []
+	quests: [
+		{
+			id: "3005000000000002"
+			shape: "hexagon"
+			size: 1.5d
+			title: "Nature's Altar"
+			subtitle: "Craft a Nature's Altar — channel ambient aura into magical effects."
+			tasks: [{ id: "3005000000000003" type: "item" item: "naturesaura:nature_altar" }]
+			rewards: [
+				{ id: "3005000000000004" type: "xp" xp: 75 }
+			]
+			x: 0.0d  y: 0.0d
+		}
+		{
+			dependencies: ["3005000000000002"]
+			id: "3005000000000010"
+			title: "Aura Detector"
+			subtitle: "Craft an Aura Detector to see local aura levels."
+			tasks: [{ id: "3005000000000011" type: "item" item: "naturesaura:aura_detector" }]
+			rewards: [{ id: "3005000000000012" type: "xp" xp: 75 }]
+			x: 2.0d  y: 0.0d
+		}
+		{
+			dependencies: ["3005000000000010"]
+			id: "3005000000000020"
+			title: "Ancient Sapling"
+			subtitle: "Grow an Ancient Tree to generate large amounts of natural aura."
+			tasks: [{ id: "3005000000000021" type: "item" item: "naturesaura:ancient_sapling" }]
+			rewards: [
+				{ id: "3005000000000022" type: "item" item: { Count: 4 id: "naturesaura:gold_leaf" tag: { Damage: 0 } } }
+				{ id: "3005000000000023" type: "xp" xp: 125 }
+			]
+			x: 4.0d  y: 0.0d
+		}
+		{
+			dependencies: ["3005000000000020"]
+			id: "3005000000000030"
+			title: "Botanist's Hat"
+			subtitle: "Craft the Botanist's Hat — increases aura generation when worn."
+			tasks: [{ id: "3005000000000031" type: "item" item: "naturesaura:botanist_hat" }]
+			rewards: [{ id: "3005000000000032" type: "xp" xp: 150 }]
+			x: 6.0d  y: 0.0d
+		}
+	]
+	title: "&aNature's Aura"
+}

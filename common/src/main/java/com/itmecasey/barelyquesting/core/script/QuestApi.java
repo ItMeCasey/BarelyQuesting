@@ -237,6 +237,14 @@ public final class QuestApi {
 
     // ---- events ----
 
+    /**
+     * Drops every event listener scripts registered. Call it first in a server script that registers listeners, so a script reload
+     * (/reload, /kubejs reload server_scripts) replaces the old listeners instead of adding a second copy.
+     */
+    public void clearListeners() {
+        ScriptEvents.clear();
+    }
+
     public void onQuestStarted(Consumer<ScriptEvents.Event> listener) {
         ScriptEvents.on("questStarted", listener);
     }

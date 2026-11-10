@@ -118,7 +118,7 @@ public final class FtbImporter {
 
     private Chapter chapter(JsonObject o) {
         String rawId = Json.str(o, "id", "");
-        String title = Json.str(o, "title", lang.getOrDefault("chapter." + rawId + ".title", Json.str(o, "filename", "Chapter")));
+        String title = plain(Json.str(o, "title", lang.getOrDefault("chapter." + rawId + ".title", Json.str(o, "filename", "Chapter"))));
         Chapter c = new Chapter(uniqueChapterId(title));
         c.title = title;
         c.icon = o.has("icon") ? item(o.get("icon")) : ItemSpec.of("minecraft:book");
@@ -134,6 +134,11 @@ public final class FtbImporter {
             c.quests.add(q);
         }
         return c;
+    }
+
+    /** FTB Quests titles carry Minecraft colour and style codes such as "&a" and "&l" and are drawn as plain text here, so they are dropped from titles (descriptions keep theirs for the rich text). */
+    static String plain(String text) {
+        return text == null ? "" : text.replaceAll("[&§][0-9a-fk-orA-FK-OR]", "");
     }
 
     private String uniqueChapterId(String title) {
@@ -166,7 +171,7 @@ public final class FtbImporter {
         Quest q = new Quest(ids.get(rawId));
         q.x = (int) Math.round(o.has("x") ? o.get("x").getAsDouble() : 0);
         q.y = (int) Math.round(o.has("y") ? o.get("y").getAsDouble() : 0);
-        q.title = Json.str(o, "title", lang.getOrDefault("quest." + rawId + ".title", ""));
+        q.title = plain(Json.str(o, "title", lang.getOrDefault("quest." + rawId + ".title", "")));
         String desc = lang.get("quest." + rawId + ".quest_desc");
         if (desc == null && o.has("description") && o.get("description").isJsonArray()) {
             desc = join(o.get("description").getAsJsonArray());

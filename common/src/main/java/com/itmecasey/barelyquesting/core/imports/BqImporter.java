@@ -34,7 +34,100 @@ public final class BqImporter {
     }
 
     public static boolean looks(Path path) {
-        return findDatabase(path) != null;
+        return findDatabase(path) != null || splitRoot(path) != null;
+    }
+
+    /** The folder of a split export (Quests/ and QuestLines/ with one JSON file per quest), as newer Better Questing versions write it. */
+    private static Path splitRoot(Path path) {
+        if (!Files.isDirectory(path)) {
+            return null;
+        }
+        for (Path p : new Path[] {path, path.resolve("DefaultQuests")}) {
+            if (Files.isDirectory(p.resolve("Quests"))) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private static List<Path> jsonFiles(Path dir) throws IOException {
+        List<Path> out = new ArrayList<>();
+        if (!Files.isDirectory(dir)) {
+            return out;
+        }
+        try (java.util.stream.Stream<Path> s = Files.walk(dir)) {
+            s.filter(f -> Files.isRegularFile(f) && f.getFileName().toString().endsWith(".json")).sorted().forEach(out::add);
+        }
+        return out;
+    }
+
+    private static String key(JsonObject o, String high, String low) {
+        return Json.lng(o, high, 0) + ":" + Json.lng(o, low, 0);
+    }
+
+    /**
+     * Reads a split export into the shape of the single-file export so one code path handles both: quests get small numbers,
+     * prerequisites and quest line entries are rewritten from (high, low) id pairs to those numbers.
+     */
+    private static JsonObject[] readSplit(Path root) throws IOException {
+        JsonObject quests = new JsonObject();
+        Map<String, Integer> numbers = new HashMap<>();
+        List<JsonObject> list = new ArrayList<>();
+        for (Path f : jsonFiles(root.resolve("Quests"))) {
+            JsonElement e = clean(Json.parse(Files.readString(f, StandardCharsets.UTF_8)));
+            if (!e.isJsonObject()) {
+                continue;
+            }
+            JsonObject q = e.getAsJsonObject();
+            numbers.put(key(q, "questIDHigh", "questIDLow"), list.size());
+            q.addProperty("questID", list.size());
+            list.add(q);
+        }
+        for (JsonObject q : list) {
+            JsonArray pre = new JsonArray();
+            for (JsonObject ref : values(q.get("preRequisites"))) {
+                Integer n = numbers.get(key(ref, "questIDHigh", "questIDLow"));
+                if (n != null) {
+                    pre.add(n);
+                }
+            }
+            if (q.has("preRequisites") && !q.get("preRequisites").isJsonArray() || !q.has("preRequisites")) {
+                q.add("preRequisites", pre);
+            }
+            quests.add(String.valueOf(q.get("questID").getAsInt()), q);
+        }
+        JsonObject lines = new JsonObject();
+        int index = 0;
+        for (Path f : jsonFiles(root.resolve("QuestLines"))) {
+            JsonElement e = clean(Json.parse(Files.readString(f, StandardCharsets.UTF_8)));
+            if (!e.isJsonObject()) {
+                continue;
+            }
+            JsonObject line = e.getAsJsonObject();
+            JsonObject entries = new JsonObject();
+            int n = 0;
+            for (JsonObject entry : values(line.get("quests"))) {
+                Integer id = numbers.get(key(entry, "questIDHigh", "questIDLow"));
+                if (id == null) {
+                    id = numbers.get(key(entry, "id", "id"));
+                }
+                if (id == null) {
+                    continue;
+                }
+                JsonObject placed = new JsonObject();
+                placed.addProperty("id", id);
+                placed.addProperty("x", Json.integer(entry, "x", 0));
+                placed.addProperty("y", Json.integer(entry, "y", 0));
+                entries.add(String.valueOf(n++), placed);
+            }
+            line.add("quests", entries);
+            lines.add(String.valueOf(index++), line);
+        }
+        JsonObject db = new JsonObject();
+        db.add("questDatabase", quests);
+        JsonObject lineDb = new JsonObject();
+        lineDb.add("questLineDatabase", lines);
+        return new JsonObject[] {db, lineDb};
     }
 
     private static Path findDatabase(Path path) {
@@ -103,14 +196,20 @@ public final class BqImporter {
 
     public void load(Path path) throws IOException {
         Path dbFile = findDatabase(path);
-        if (dbFile == null) {
-            throw new IOException("no QuestDatabase.json found");
-        }
-        JsonObject db = clean(Json.parse(Files.readString(dbFile, StandardCharsets.UTF_8))).getAsJsonObject();
+        JsonObject db;
         JsonObject lines = null;
-        Path linesFile = dbFile.resolveSibling("QuestLineDatabase.json");
-        if (Files.exists(linesFile)) {
-            lines = clean(Json.parse(Files.readString(linesFile, StandardCharsets.UTF_8))).getAsJsonObject();
+        if (dbFile != null) {
+            db = clean(Json.parse(Files.readString(dbFile, StandardCharsets.UTF_8))).getAsJsonObject();
+            Path linesFile = dbFile.resolveSibling("QuestLineDatabase.json");
+            if (Files.exists(linesFile)) {
+                lines = clean(Json.parse(Files.readString(linesFile, StandardCharsets.UTF_8))).getAsJsonObject();
+            }
+        } else if (splitRoot(path) != null) {
+            JsonObject[] split = readSplit(splitRoot(path));
+            db = split[0];
+            lines = split[1];
+        } else {
+            throw new IOException("no QuestDatabase.json found");
         }
 
         Map<Integer, JsonObject> byId = new HashMap<>();

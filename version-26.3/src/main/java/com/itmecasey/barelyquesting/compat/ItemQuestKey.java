@@ -65,6 +65,11 @@ public final class ItemQuestKey {
         return true;
     }
 
+    /** The item id under the mouse on the current screen, or null. */
+    public static String hoveredItemId() {
+        return hoveredItem(Minecraft.getInstance(), McGui.screen());
+    }
+
     private static String hoveredItem(Minecraft mc, Screen screen) {
         Hover[] sources = {() -> bei(mc, screen), ItemQuestKey::emi, ItemQuestKey::jei, ItemQuestKey::rei, () -> slot(screen)};
         for (Hover source : sources) {

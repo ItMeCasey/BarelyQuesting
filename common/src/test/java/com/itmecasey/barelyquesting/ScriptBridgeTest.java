@@ -135,4 +135,16 @@ class ScriptBridgeTest {
         ExtraBindings.PROVIDERS.clear();
         assertTrue(ModJsBridge.install(new QuestApi()), "test doubles are on the classpath here");
     }
+
+    @Test
+    void clearListenersStopsOldListenersAfterAScriptReload() {
+        int[] fired = {0};
+        com.itmecasey.barelyquesting.core.script.QuestApi api = new com.itmecasey.barelyquesting.core.script.QuestApi();
+        api.onQuestCompleted(e -> fired[0]++);
+        api.clearListeners();
+        api.onQuestCompleted(e -> fired[0] += 10);
+        com.itmecasey.barelyquesting.core.script.ScriptEvents.fire("questCompleted", "team", new com.itmecasey.barelyquesting.core.model.Quest("q"), null, null);
+        org.junit.jupiter.api.Assertions.assertEquals(10, fired[0]);
+        com.itmecasey.barelyquesting.core.script.ScriptEvents.clear();
+    }
 }

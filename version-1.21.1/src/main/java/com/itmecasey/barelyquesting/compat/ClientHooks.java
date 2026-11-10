@@ -20,6 +20,9 @@ public final class ClientHooks {
     private ClientHooks() {
     }
 
+    /** How many times resources were reloaded (F3+T and the like); the dev tour waits on it. */
+    public static volatile int reloads;
+
     public static KeyMapping openKey() {
         return Holder.OPEN;
     }
@@ -33,6 +36,7 @@ public final class ClientHooks {
 
     public static void resourcesReloaded(ResourceManager manager) {
         McEnv.setResources(manager);
+        reloads++;
         GfxImpl.clearCaches();
         ThemeManager.reload();
         ThemeManager.select(ThemeManager.selectedId());

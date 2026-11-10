@@ -79,6 +79,16 @@ public final class QuestScreen extends Screen {
         return super.charTyped(c, modifiers);
     }
 
+    /** The book's key handling, shared by keyPressed and the development tour. */
+    public boolean pressKey(int key, int mods) {
+        return gfx != null && ui.keyPressed(gfx, key, mods);
+    }
+
+    /** The book's character handling, shared by charTyped and the development tour. */
+    public boolean typeChar(char c) {
+        return ui.charTyped(c);
+    }
+
     @Override
     public void onClose() {
         ui.closed();

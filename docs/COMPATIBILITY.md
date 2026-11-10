@@ -21,16 +21,16 @@ The self test starts a dedicated server with the mod, creates a real `ServerPlay
 
 | Mod | Role | Status |
 |---|---|---|
-| ModJS | scripting global `BarelyQuesting` | checked with real JavaScript against a stand-in of its binding API, and on a real client on NeoForge 26.1.2 with a ModJS 2026.11.30 development snapshot. Same reflective code on every build. |
-| KubeJS | scripting through a generated helper script | checked on NeoForge 26.1.2 with KubeJS 26.1.2-8.0.8. KubeJS has builds for 1.20.1 (Forge, NeoForge), 1.21.1 (NeoForge) and 26.1.2 (NeoForge); none for 26.2, 26.3 or Forge 1.21.1/26.x. No native plugin: callback registrations are not cleaned up on a script reload, restart after changing them. |
-| JEI, REI, EMI, BEI | item clicks open recipes and uses | JEI, REI and BEI checked on NeoForge 26.1.2. EMI has no build for that target, so it is untested. BEI is only wired on the 26.x builds (its lookup is an internal popup); on 1.20.1 and 1.21.1 BEI is not driven. JEI reaches its runtime through an internal class, so a JEI change can break it. |
+| ModJS | scripting global `BarelyQuesting` | checked with real JavaScript against a stand-in of its binding API, and on a real client on NeoForge 26.1.2 with ModJS 2026.11.31 (jar sha256 c9944fde5c545cca323ee5edcce064a856b242b3ccc13c09052404cfe2818af0). Same reflective code on every build. |
+| KubeJS | scripting through a generated helper script | checked on NeoForge 26.1.2 with KubeJS 26.1.2-8.0.8. KubeJS has builds for 1.20.1 (Forge, NeoForge), 1.21.1 (NeoForge) and 26.1.2 (NeoForge); none for 26.2, 26.3 or Forge 1.21.1/26.x. There is no native KubeJS plugin by design (the helper script needs no KubeJS version). Script reloads are handled by `BarelyQuesting.clearListeners()` at the top of a server script: two real `/reload`s on KubeJS 8.0.8 left exactly one listener firing. |
+| JEI, REI, EMI, BEI | item clicks open recipes and uses | JEI, REI and BEI checked on NeoForge 26.1.2, both the click-through to recipes and Ctrl+J reading the hovered item out of each overlay with an empty inventory (JEI oak_log, REI stone, BEI stone). EMI has no build for that target, so its recipe click and hover read are untested. BEI is only wired on the 26.x builds (its lookup is an internal popup); on 1.20.1 and 1.21.1 BEI is not driven. JEI reaches its runtime through an internal class, so a JEI change can break it. |
 
 The mod adds no blocks or entities, so SMWTI and Jade have nothing to show.
 
 ## Known gaps
 
-- The Quest Book item (2026.11.2) is registered on all ten builds and compiles and loads in the headless test, but it has not been held in a real client.
-- Ctrl+J over an item opens its quest (2026.11.3). The lookup and the book opening were checked on real clients; reading the hovered item out of JEI, REI, EMI or BEI is reflection against their current APIs and was not tried in a live viewer session. Inventory slots use the game's own hovered slot.
+- Ctrl+J over an item opens its quest. Checked on every build with the key state set through the game (not an OS keypress) over an inventory slot, and over JEI, REI and BEI overlays on NeoForge 26.1.2. Not checked: EMI, and the viewers on 1.20.1 and 1.21.1 (no viewer jars were available for those builds).
 - The editor's item picker lists registry items; it is not backed by JEI or BEI's own search.
 - The 1.20.1 and 1.21.1 screens draw by depth instead of by layer; their frames have not been looked at.
-- Multiplayer (two clients on one server) is covered by unit tests of the wire format and server, not by a real session.
+- Multiplayer (two real clients on one server) was not run. A second player is simulated through the server API in unit tests and in a real client (team create, invite, join, shared completion, disband).
+- The importers were run on one real FTB Quests chapter (Forge 1.20.1 format) and one real Better Questing split export (format 3.1.0); both exposed gaps that are fixed in 2026.11.4. The Better Questing sample was a small slice, so tasks and rewards from real Better Questing books are covered only by the hand-written sample.
