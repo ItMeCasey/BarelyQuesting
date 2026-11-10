@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
-Updated: 2026-11-09
-Summary: Barely Questing 2026.11.4 (built locally; 2026.11.3 is released) builds for all ten Forge and NeoForge targets; every build passed unit tests, the headless server self test and a real-client tour, with deeper checks (editor, teams, tasks in a live world, viewers, ModJS 2026.11.31, KubeJS reload, real FTB Quests and Better Questing books) listed per step; open: EMI (no test build) and viewers on 1.20.1/1.21.1, CurseForge approval.
+Updated: 2026-11-10
+Summary: Barely Questing 2026.11.4 (built locally; 2026.11.3 is released) builds for all ten Forge and NeoForge targets; every build passed unit tests, the headless server self test and a real-client tour, with deeper checks (editor, teams, tasks in a live world, viewers, ModJS 2026.11.31, KubeJS reload, real FTB Quests and Better Questing books) listed per step; open: CurseForge approval.
 Spend: none
 
 ## Foundation
@@ -27,7 +27,7 @@ Spend: none
 - [x] Commands, HUD tracker, toasts (reload, reset, complete, open, bq edit and the HUD with a pinned quest and a toast, on all ten builds) (w:3)
 - [x] Craftable Quest Book item (held in the main hand and used through the game mode on all ten builds; the book opened) (w:2)
 - [x] Ctrl+J over an item opens its quest (key state set through the game over an inventory slot on all ten builds; the hovered item read out of live JEI, REI and BEI overlays on NeoForge 26.1.2) (w:1)
-- [ ] EMI recipe clicks and hover read, and JEI/REI/BEI on 1.20.1 and 1.21.1 (no EMI build for 26.1.2 and no viewer jars for the older builds were available to test) (w:2)
+- [x] EMI, JEI, REI and BEI on 1.20.1 and 1.21.1: recipe and usage clicks plus the Ctrl+J hover read, real clients with CurseForge jars (NeoForge 1.21.1: JEI, REI, EMI, BEI; Forge 1.21.1: JEI, BEI; Forge 1.20.1: JEI, REI, EMI, BEI; NeoForge 1.20.1: BEI); n/a: no EMI build for NeoForge 26.1.2, no JEI, REI or EMI build for NeoForge 1.20.1, no REI or EMI build for Forge 1.21.1 (w:2)
 
 ## Integrations
 - [x] ModJS bridge (real JavaScript test, and a real client on NeoForge 26.1.2 with ModJS 2026.11.31, sha256 c9944fde...; same reflective code on every build) (w:3)

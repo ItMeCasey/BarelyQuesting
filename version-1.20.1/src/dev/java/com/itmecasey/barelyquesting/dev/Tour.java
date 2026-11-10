@@ -114,6 +114,46 @@ public final class Tour {
         onClient(() -> ClientHooks.openBook(null));
         Thread.sleep(2500);
         shot("graph");
+        if ("none".equals(System.getenv("BARELYQUESTING_VIEWER"))) {
+            onClient(() -> {
+                var before = McGui.screen();
+                if (!com.itmecasey.barelyquesting.compat.Viewers.installed().isEmpty()
+                        || com.itmecasey.barelyquesting.compat.Viewers.show(com.itmecasey.barelyquesting.core.model.ItemSpec.of("minecraft:oak_planks"), false)
+                        || McGui.screen() != before) throw new IllegalStateException("no-viewer fallback changed the screen");
+            });
+            log("INTEGRATION PASS no optional viewers; quest screen remains usable");
+        } else if (System.getenv("BARELYQUESTING_VIEWER") != null) {
+            for (boolean uses : new boolean[] {false, true}) {
+                boolean[] opened = {false};
+                onClient(() -> opened[0] = com.itmecasey.barelyquesting.compat.Viewers.show(
+                        com.itmecasey.barelyquesting.core.model.ItemSpec.of("minecraft:oak_planks"), uses));
+                if (!opened[0]) throw new IllegalStateException("viewer lookup failed: uses=" + uses);
+                Thread.sleep(1500);
+                shot("viewer_" + (uses ? "uses" : "recipes"));
+                log("INTEGRATION PASS viewer " + (uses ? "uses" : "recipes"));
+                if ("bei".equals(System.getenv("BARELYQUESTING_VIEWER"))) {
+                    onClient(() -> {
+                        try {
+                            Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("close").invoke(null);
+                        } catch (ReflectiveOperationException e) { throw new IllegalStateException(e); }
+                        McGui.screen().tick();
+                        if (!(McGui.screen() instanceof QuestScreen)) throw new IllegalStateException("BEI did not return to the quest screen");
+                        try {
+                            if ((Boolean) Class.forName("com.itmecasey.bei.client.RecipePopup").getMethod("isOpen").invoke(null))
+                                throw new IllegalStateException("BEI left a stale popup");
+                        } catch (ReflectiveOperationException e) { throw new IllegalStateException(e); }
+                    });
+                    log("INTEGRATION PASS BEI return and popup cleanup");
+                }
+                onClient(() -> ClientHooks.openBook(null));
+                Thread.sleep(500);
+            }
+        }
+        if (System.getenv("BARELYQUESTING_HOVER") != null) {
+            Tour2.hover(System.getenv("BARELYQUESTING_VIEWER"));
+            if (System.getenv("BARELYQUESTING_INTEGRATION_ONLY") != null) return;
+        }
+        if (System.getenv("BARELYQUESTING_INTEGRATION_ONLY") != null) return;
         onClient(() -> ui().select("bench"));
         Thread.sleep(700);
         shot("graph_selected");

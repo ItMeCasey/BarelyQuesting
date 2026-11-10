@@ -23,13 +23,13 @@ The self test starts a dedicated server with the mod, creates a real `ServerPlay
 |---|---|---|
 | ModJS | scripting global `BarelyQuesting` | checked with real JavaScript against a stand-in of its binding API, and on a real client on NeoForge 26.1.2 with ModJS 2026.11.31 (jar sha256 c9944fde5c545cca323ee5edcce064a856b242b3ccc13c09052404cfe2818af0). Same reflective code on every build. |
 | KubeJS | scripting through a generated helper script | checked on NeoForge 26.1.2 with KubeJS 26.1.2-8.0.8. KubeJS has builds for 1.20.1 (Forge, NeoForge), 1.21.1 (NeoForge) and 26.1.2 (NeoForge); none for 26.2, 26.3 or Forge 1.21.1/26.x. There is no native KubeJS plugin by design (the helper script needs no KubeJS version). Script reloads are handled by `BarelyQuesting.clearListeners()` at the top of a server script: two real `/reload`s on KubeJS 8.0.8 left exactly one listener firing. |
-| JEI, REI, EMI, BEI | item clicks open recipes and uses | JEI, REI and BEI checked on NeoForge 26.1.2, both the click-through to recipes and Ctrl+J reading the hovered item out of each overlay with an empty inventory (JEI oak_log, REI stone, BEI stone). EMI has no build for that target, so its recipe click and hover read are untested. BEI is only wired on the 26.x builds (its lookup is an internal popup); on 1.20.1 and 1.21.1 BEI is not driven. JEI reaches its runtime through an internal class, so a JEI change can break it. |
+| JEI, REI, EMI, BEI | item clicks open recipes and uses | Checked on real clients, both the click-through to recipes and uses and Ctrl+J reading the hovered item out of each overlay with an empty inventory: NeoForge 26.1.2 (JEI, REI, BEI), NeoForge 1.21.1 (JEI, REI, EMI, BEI), Forge 1.21.1 (JEI, BEI), Forge 1.20.1 (JEI, REI, EMI, BEI), NeoForge 1.20.1 (BEI). n/a: no EMI build for NeoForge 26.1.2, no JEI, REI or EMI build for NeoForge 1.20.1, no REI or EMI build for Forge 1.21.1. BEI is driven through its popup class by reflection. JEI reaches its runtime through an internal class, so a JEI change can break it. |
 
 The mod adds no blocks or entities, so SMWTI and Jade have nothing to show.
 
 ## Known gaps
 
-- Ctrl+J over an item opens its quest. Checked on every build with the key state set through the game (not an OS keypress) over an inventory slot, and over JEI, REI and BEI overlays on NeoForge 26.1.2. Not checked: EMI, and the viewers on 1.20.1 and 1.21.1 (no viewer jars were available for those builds).
+- Ctrl+J over an item opens its quest. Checked on every build with the key state set through the game (not an OS keypress) over an inventory slot, and over the JEI, REI, EMI and BEI overlays on every build where that viewer exists (see the viewer row above).
 - The editor's item picker lists registry items; it is not backed by JEI or BEI's own search.
 - The 1.20.1 and 1.21.1 screens draw by depth instead of by layer; their frames have not been looked at.
 - Multiplayer (two real clients on one server) was not run. A second player is simulated through the server API in unit tests and in a real client (team create, invite, join, shared completion, disband).

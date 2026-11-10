@@ -1,4 +1,19 @@
-# Optional integrations: NeoForge 26.1.2
+# Optional integrations
+
+## 1.20.1 and 1.21.1 (viewers)
+
+Checked 2026-11-10 on real clients, with jars from CurseForge (JEI 15.74.0.234 and 19.70.0.469, REI 12.1.785 and 16.0.799 with Architectury and Cloth Config, EMI 1.1.24, BEI 2026.11.13). Each run opened oak planks recipes and uses, read the hovered item for Ctrl+J, and returned to the quest book (BEI also closed its popup).
+
+| Build | JEI | REI | EMI | BEI |
+| --- | --- | --- | --- | --- |
+| NeoForge 1.21.1 | pass | pass | pass | pass |
+| Forge 1.21.1 | pass | n/a (no build) | n/a (no build) | pass |
+| Forge 1.20.1 | pass | pass | pass | pass |
+| NeoForge 1.20.1 | n/a (no build) | n/a (no build) | n/a (no build) | pass |
+
+Reproduce: put the jars in `<module>/.integration-cache/<profile>/` (git-ignored) and run the tour with `-PdevTools -PintegrationMods=<profile>` plus `BARELYQUESTING_VIEWER=<profile>`, `BARELYQUESTING_HOVER=1` and `BARELYQUESTING_INTEGRATION_ONLY=1`. The Forge 1.20.1 module remaps the jars and the Mixin refmaps for the dev run.
+
+## NeoForge 26.1.2
 
 Validated on 2026-11-08 with NeoForge 26.1.2.125 and Java 25. Other loader/version ports remain unfinished.
 

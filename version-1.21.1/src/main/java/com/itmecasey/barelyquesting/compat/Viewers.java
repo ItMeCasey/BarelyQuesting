@@ -28,6 +28,7 @@ public final class Viewers {
 
     public static List<String> installed() {
         List<String> out = new ArrayList<>();
+        if (has("com.itmecasey.bei.client.RecipePopup")) out.add("BEI");
         if (has("dev.emi.emi.api.EmiApi")) {
             out.add("EMI");
         }
@@ -46,7 +47,42 @@ public final class Viewers {
         if (stack.isEmpty()) {
             return false;
         }
-        return ViewerDispatch.first(() -> emi(stack, uses), () -> rei(stack, uses), () -> jei(stack, uses));
+        return ViewerDispatch.first(() -> bei(stack, uses), () -> emi(stack, uses), () -> rei(stack, uses), () -> jei(stack, uses));
+    }
+
+    private static boolean bei(ItemStack stack, boolean uses) throws ReflectiveOperationException {
+        if (!has("com.itmecasey.bei.client.RecipePopup")) return false;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return false;
+        // Resolve the optional API before switching screens; restore the quest screen if the call fails.
+        Class<?> popup = Class.forName("com.itmecasey.bei.client.RecipePopup");
+        Method open = popup.getMethod("open", net.minecraft.world.item.Item.class, boolean.class);
+        Method close = popup.getMethod("close");
+        Method isOpen = popup.getMethod("isOpen");
+        var previous = McGui.screen();
+        McGui.setScreen(new net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<net.minecraft.world.inventory.InventoryMenu>(
+                mc.player.inventoryMenu, mc.player.getInventory(), net.minecraft.network.chat.Component.literal("Recipes")) {
+            @Override public void render(net.minecraft.client.gui.GuiGraphics graphics, int x, int y, float tick) {
+                if (previous != null) previous.render(graphics, x, y, tick);
+            }
+            @Override protected void renderBg(net.minecraft.client.gui.GuiGraphics graphics, float tick, int x, int y) { }
+            @Override protected void containerTick() {
+                boolean open = ViewerDispatch.first(() -> (Boolean) isOpen.invoke(null));
+                if (!open) onClose();
+            }
+            @Override public void onClose() { McGui.setScreen(previous); }
+            @Override public void removed() {
+                super.removed();
+                ViewerDispatch.first(() -> { close.invoke(null); return true; });
+            }
+        });
+        try {
+            open.invoke(null, stack.getItem(), uses);
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            McGui.setScreen(previous);
+            throw e;
+        }
     }
 
     private static boolean emi(ItemStack stack, boolean uses) throws ReflectiveOperationException {
