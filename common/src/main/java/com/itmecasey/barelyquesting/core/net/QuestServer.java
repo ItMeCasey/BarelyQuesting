@@ -1,12 +1,14 @@
 package com.itmecasey.barelyquesting.core.net;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.itmecasey.barelyquesting.core.DefaultBook;
 import com.itmecasey.barelyquesting.core.Json;
 import com.itmecasey.barelyquesting.core.edit.EditOps;
 import com.itmecasey.barelyquesting.core.model.Book;
 import com.itmecasey.barelyquesting.core.model.Def;
+import com.itmecasey.barelyquesting.core.model.ItemSpec;
 import com.itmecasey.barelyquesting.core.model.Quest;
 import com.itmecasey.barelyquesting.core.progress.PlayerView;
 import com.itmecasey.barelyquesting.core.progress.Progress;
@@ -16,6 +18,7 @@ import com.itmecasey.barelyquesting.core.store.QuestStore;
 import com.itmecasey.barelyquesting.core.team.TeamManager;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +42,7 @@ public final class QuestServer implements QuestEngine.Listener {
 
     private final QuestStore store;
     private final Path worldDir;
+    private java.util.Set<UUID> welcomed;
     private final ServerNet net;
     private final QuestEngine.Host host;
     private final QuestEngine engine;
@@ -93,6 +97,7 @@ public final class QuestServer implements QuestEngine.Listener {
     public void reload() {
         loadBook();
         for (PlayerView p : host.players()) {
+            sendInfo(p);
             sendBook(p.uuid());
             sendTeamAndProgress(p);
         }
@@ -117,6 +122,9 @@ public final class QuestServer implements QuestEngine.Listener {
 
     public boolean canEdit(PlayerView p) {
         Book b = engine.book();
+        if (!b.editing) {
+            return false;
+        }
         return p.isOperator() || b.editors.contains(p.name().toLowerCase(java.util.Locale.ROOT)) || (b.creativeEdits && p.isCreative());
     }
 
@@ -124,9 +132,51 @@ public final class QuestServer implements QuestEngine.Listener {
 
     public void onJoin(PlayerView p) {
         engine.teams().rememberName(p.uuid(), p.name());
-        net.send(p.uuid(), new Wire.Out(Msg.S_INFO).str(p.uuid().toString()).bool(canEdit(p)).done());
+        sendInfo(p);
         sendBook(p.uuid());
         sendTeamAndProgress(p);
+        if (markWelcomed(p.uuid())) {
+            Book b = engine.book();
+            if (b.giveBookOnJoin) {
+                p.giveItem(ItemSpec.of("barelyquesting:quest_book"));
+            }
+            if (b.openBookOnJoin) {
+                open(p, null);
+            }
+        }
+    }
+
+    private void sendInfo(PlayerView p) {
+        net.send(p.uuid(), new Wire.Out(Msg.S_INFO).str(p.uuid().toString()).bool(canEdit(p)).done());
+    }
+
+    /** Remembers that the player has joined this world; true only the first time, so a rejoin or a death never repeats a welcome. */
+    private boolean markWelcomed(UUID id) {
+        if (welcomed == null) {
+            welcomed = new java.util.HashSet<>();
+            try {
+                Path file = worldDir.resolve("welcomed.json");
+                if (Files.exists(file)) {
+                    for (JsonElement e : Json.parse(Files.readString(file, java.nio.charset.StandardCharsets.UTF_8)).getAsJsonArray()) {
+                        welcomed.add(UUID.fromString(e.getAsString()));
+                    }
+                }
+            } catch (IOException | RuntimeException e) {
+                LOG.log(Level.WARNING, "Could not read welcomed.json", e);
+            }
+        }
+        if (!welcomed.add(id)) {
+            return false;
+        }
+        try {
+            com.google.gson.JsonArray all = new com.google.gson.JsonArray();
+            welcomed.stream().map(UUID::toString).sorted().forEach(all::add);
+            Files.createDirectories(worldDir);
+            Files.writeString(worldDir.resolve("welcomed.json"), Json.compact(all), java.nio.charset.StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, "Could not save welcomed.json", e);
+        }
+        return true;
     }
 
     private void sendBook(UUID to) {

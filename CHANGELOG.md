@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.11.7
+
+- Fixed: the **x** in the corner of every dialog (Themes, Team, item picker and the rest) did nothing, because the dialog's click catcher sat on top of it. It now closes the dialog on every build. ([#1](https://github.com/ItMeCasey/BarelyQuesting/issues/1))
+- Fixed (Minecraft 26.3): **Esc** did not close a dialog and Enter, Backspace, the arrow keys and Ctrl+A, C, V, X, Y, Z did nothing in the book, because 26.3 reports keys as SDL scancodes instead of GLFW codes. The 26.3 builds now translate them. ([#1](https://github.com/ItMeCasey/BarelyQuesting/issues/1))
+- Fixed: text ran past the edge of the Themes and Team dialogs. Long lines now wrap inside the box (new `Ui.wrap` and `Ui.paragraph`). ([#4](https://github.com/ItMeCasey/BarelyQuesting/issues/4))
+- New: `"editing": "off"` in `book.json` hides the Edit button and refuses every edit for everyone, operators included. Default `"on"`. Scripts, import and `/barelyquesting reload` still work. See the Book settings wiki page. ([#2](https://github.com/ItMeCasey/BarelyQuesting/issues/2))
+- New: `give_book_on_join` gives each player a Quest Book the first time they join a world, and `open_book_on_join` opens the book then. Both default to `false`, so nothing changes unless a pack turns them on. ([#3](https://github.com/ItMeCasey/BarelyQuesting/issues/3))
+
 ## 2026.11.6 (Forge and NeoForge 26.3 only)
 
 - Fixed: clicks in the quest book on Minecraft 26.3 used the wrong buttons (left acted as right, right did nothing). Minecraft 26.3 renumbered the mouse buttons (left is now 1, middle 2, right 3), and the mod still compared clicks against 0 and 1. The other eight builds are unchanged and stay at 2026.11.5.

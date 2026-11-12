@@ -55,9 +55,10 @@ public final class Modals {
             ui.zone(0, 0, g.width(), g.height(), bt -> { }, d -> { });
             th.draw(g, "panel", x, y, mw, mh);
             g.text(ui.fit(title, mw - 40, Gfx.BOLD), x + 8, y + 7, th.color("title"), Gfx.BOLD | Gfx.SHADOW);
-            ui.button("x", x + mw - 18, y + 4, 14, 14, true, b::closeModal);
             g.fill(x + 6, y + 20, mw - 12, 1, th.color("panel_edge"));
+            // The box-wide swallow zone goes first: zones registered later sit on top, so the x and the content stay clickable.
             ui.zone(x, y, mw, mh, bt -> { }, d -> { });
+            ui.button("x", x + mw - 18, y + 4, 14, 14, true, b::closeModal);
             content(b, ui, x + 8, y + 26, mw - 16, mh - 32);
         }
     }
@@ -411,8 +412,7 @@ public final class Modals {
             JsonObject team = b.st.team;
             boolean solo = Json.bool(team, "solo", true);
             boolean owner = Json.str(team, "owner", "").equals(b.st.self.toString());
-            g.text(solo ? "You play solo. Create a team to share progress." : "Team: " + Json.str(team, "name", "?"), x, y, th.color("text"), Gfx.BOLD);
-            y += 14;
+            y = ui.paragraph(solo ? "You play solo. Create a team to share progress." : "Team: " + Json.str(team, "name", "?"), x, y, w, th.color("text"), Gfx.BOLD) + 3;
             for (JsonElement e : Json.arr(team, "members")) {
                 JsonObject m = e.getAsJsonObject();
                 String name = Json.str(m, "name", "?");
@@ -487,7 +487,7 @@ public final class Modals {
                 b.st.saveSettings();
             });
             y += 19;
-            g.text("Add themes with a resource pack; F3+T reloads them.", x, y, th.color("text_muted"), 0);
+            ui.paragraph("Add themes with a resource pack; F3+T reloads them.", x, y, w, th.color("text_muted"), 0);
         }
     }
 
@@ -553,7 +553,7 @@ public final class Modals {
             g.item(c.icon, x + w - 20, y + 10, 16);
             ui.zone(x + w - 22, y + 8, 20, 20, bt -> b.open(new ItemPick(c.icon, false, spec -> send(b, copy -> copy.icon = spec.withCount(1)))), null);
             y += 32;
-            g.text("Group (chapters with the same group stay together)", x, y, th.color("text_muted"), 0);
+            g.text(ui.fit("Group (chapters with the same group stay together)", w, 0), x, y, th.color("text_muted"), 0);
             th.draw(g, "slot", x, y + 10, w, 16);
             group.draw(g, x, y + 10, w, 16, th.color("text"), th.color("text_muted"), ui.now);
             ui.zone(x, y + 10, w, 16, bt -> {

@@ -53,6 +53,41 @@ public final class QuestScreen extends Screen {
         return button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_MIDDLE ? 2 : button;
     }
 
+    /** Minecraft 26.3 reports keys as SDL scancodes; the shared book UI uses GLFW key codes. Keys the book does not use map to -1. */
+    private static int glfwKey(int scancode) {
+        switch (scancode) {
+            case com.mojang.blaze3d.platform.InputConstants.KEY_ESCAPE: return 256;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_RETURN: return 257;
+            case 88: return 335; // keypad enter
+            case com.mojang.blaze3d.platform.InputConstants.KEY_TAB: return 258;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_BACKSPACE: return 259;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_INSERT: return 260;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_DELETE: return 261;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT: return 262;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_LEFT: return 263;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_DOWN: return 264;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_UP: return 265;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_PAGEUP: return 266;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_PAGEDOWN: return 267;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_HOME: return 268;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_END: return 269;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_A: return 65;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_C: return 67;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_V: return 86;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_X: return 88;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_Y: return 89;
+            case com.mojang.blaze3d.platform.InputConstants.KEY_Z: return 90;
+            default: return -1;
+        }
+    }
+
+    /** SDL modifier bits to the GLFW ones the book uses (shift 1, control 2, alt 4). */
+    private static int glfwMods(int sdl) {
+        return ((sdl & com.mojang.blaze3d.platform.InputConstants.MOD_SHIFT) != 0 ? 1 : 0)
+                | ((sdl & com.mojang.blaze3d.platform.InputConstants.MOD_CONTROL) != 0 ? 2 : 0)
+                | ((sdl & com.mojang.blaze3d.platform.InputConstants.MOD_ALT) != 0 ? 4 : 0);
+    }
+
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         return ui.mouseClicked((int) event.x(), (int) event.y(), uiButton(event)) || super.mouseClicked(event, doubleClick);
@@ -75,7 +110,7 @@ public final class QuestScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (gfx != null && ui.keyPressed(gfx, event.key(), event.modifiers())) {
+        if (gfx != null && ui.keyPressed(gfx, glfwKey(event.key()), glfwMods(event.modifiers()))) {
             return true;
         }
         if (!ui.typing() && !ui.hasModal() && ClientHooks.openKey().matches(event)) {

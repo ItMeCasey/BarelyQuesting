@@ -156,6 +156,47 @@ public final class Ui {
         return s.substring(0, n) + e;
     }
 
+    /** Splits the text into lines no wider than maxWidth, breaking at spaces (and inside a word that is wider than a line). */
+    public java.util.List<String> wrap(String s, int maxWidth, int style) {
+        java.util.List<String> lines = new java.util.ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : s.split(" ")) {
+            String tryLine = line.length() == 0 ? word : line + " " + word;
+            if (g.textWidth(tryLine, style) <= maxWidth) {
+                line.setLength(0);
+                line.append(tryLine);
+                continue;
+            }
+            if (line.length() > 0) {
+                lines.add(line.toString());
+                line.setLength(0);
+            }
+            String rest = word;
+            while (!rest.isEmpty() && g.textWidth(rest, style) > maxWidth) {
+                int n = rest.length();
+                while (n > 1 && g.textWidth(rest.substring(0, n), style) > maxWidth) {
+                    n--;
+                }
+                lines.add(rest.substring(0, n));
+                rest = rest.substring(n);
+            }
+            line.append(rest);
+        }
+        if (line.length() > 0 || lines.isEmpty()) {
+            lines.add(line.toString());
+        }
+        return lines;
+    }
+
+    /** Draws wrapped text and returns the y below its last line. */
+    public int paragraph(String s, int x, int y, int maxWidth, int color, int style) {
+        for (String l : wrap(s, maxWidth, style)) {
+            g.text(l, x, y, color, style);
+            y += g.lineHeight() + 1;
+        }
+        return y;
+    }
+
     public boolean button(String label, int x, int y, int w, int h, boolean enabled, Runnable action) {
         boolean over = enabled && hover(x, y, w, h);
         th.draw(g, enabled ? (over ? "button_hover" : "button") : "button_off", x, y, w, h);

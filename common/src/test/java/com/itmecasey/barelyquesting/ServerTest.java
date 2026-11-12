@@ -195,4 +195,43 @@ class ServerTest {
         String big = "abc" + "x".repeat(10000);
         assertEquals(big, Wire.gunzip(Wire.gzip(big)));
     }
+
+    @Test
+    void firstJoinGivesAndOpensTheBookOnlyWhenAsked() {
+        server.onJoin(alice);
+        assertTrue(alice.given.isEmpty(), "off by default");
+        server.engine().book().giveBookOnJoin = true;
+        server.onJoin(bob);
+        assertEquals(1, bob.given.size());
+        assertTrue(bob.given.get(0).contains("barelyquesting:quest_book"));
+        server.onJoin(bob);
+        assertEquals(1, bob.given.size(), "a rejoin does not give it again");
+        server = new QuestServer(dir.resolve("config"), dir.resolve("world"), (p, m) -> packets.add(m), host());
+        server.start();
+        server.engine().book().giveBookOnJoin = true;
+        server.onJoin(bob);
+        assertEquals(1, bob.given.size(), "a restart does not give it again");
+        packets.clear();
+        server.engine().book().openBookOnJoin = true;
+        FakePlayer carol = new FakePlayer("carol");
+        server.onJoin(carol);
+        assertEquals(1, count(Msg.S_OPEN));
+        assertEquals(1, carol.given.size());
+    }
+
+    @Test
+    void bookSettingsRoundTripAndEditingOffRefusesEdits() throws IOException {
+        server.engine().book().editing = false;
+        server.engine().book().giveBookOnJoin = true;
+        server.store().save(server.engine().book());
+        String json = Files.readString(dir.resolve("config").resolve("book.json"));
+        assertTrue(json.contains("\"editing\": \"off\"") || json.contains("\"editing\":\"off\""), json);
+        server = new QuestServer(dir.resolve("config"), dir.resolve("world"), (p, m) -> packets.add(m), host());
+        server.start();
+        assertFalse(server.engine().book().editing);
+        assertTrue(server.engine().book().giveBookOnJoin);
+        assertFalse(server.engine().book().openBookOnJoin);
+        alice.op = true;
+        assertFalse(server.canEdit(alice));
+    }
 }

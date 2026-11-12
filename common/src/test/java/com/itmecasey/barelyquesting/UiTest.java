@@ -254,6 +254,60 @@ class UiTest {
     }
 
     @Test
+    void theCloseButtonClosesEveryDialog() {
+        click("Team");
+        assertTrue(ui.hasModal());
+        clickExact("x");
+        assertFalse(ui.hasModal(), "the x closes the Team dialog");
+        click("Themes");
+        assertTrue(ui.hasModal());
+        click("Default");
+        clickExact("x");
+        assertFalse(ui.hasModal(), "the x closes the Themes dialog");
+    }
+
+    void clickExact(String text) {
+        frame();
+        RecordingGfx.Text hit = null;
+        for (RecordingGfx.Text t : g.texts) {
+            if (t.s.equals(text)) {
+                hit = t;
+            }
+        }
+        assertNotNull(hit, "text on screen: " + text);
+        assertTrue(ui.mouseClicked(hit.x + 2, hit.y + 2, 0), "clicked " + text);
+        frame();
+    }
+
+    @Test
+    void dialogTextStaysInsideTheBox() {
+        for (String button : new String[] {"Themes", "Team"}) {
+            click(button);
+            int boxW = button.equals("Themes") ? 250 : 270;
+            int left = (g.w - boxW) / 2;
+            int right = left + boxW;
+            for (RecordingGfx.Text t : g.texts) {
+                if (t.x >= left && t.x < right) {
+                    assertTrue(t.x + t.s.length() * 6 <= right, button + " text runs past the box: " + t.s);
+                }
+            }
+            ui.keyPressed(g, Keys.ESCAPE, 0);
+            frame();
+        }
+    }
+
+    @Test
+    void editingOffHidesTheEditButtonEvenForOperators() {
+        assertTrue(alice.op);
+        server.engine().book().editing = false;
+        server.onJoin(alice);
+        assertFalse(st.canEdit);
+        frame();
+        assertFalse(g.has("Edit"));
+        assertFalse(server.canEdit(alice));
+    }
+
+    @Test
     void teamCreatedFromUi() {
         click("Team");
         click("Create team");

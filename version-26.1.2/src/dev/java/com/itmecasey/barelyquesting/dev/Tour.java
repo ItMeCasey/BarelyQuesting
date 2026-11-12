@@ -63,7 +63,7 @@ public final class Tour {
                 mc.createWorldOpenFlows().createFreshLevel("bq_tour", settings, new WorldOptions(0L, normalWorld(), false),
                         registries -> normalWorld() ? WorldPresets.createNormalWorldDimensions(registries) : WorldPresets.createFlatWorldDimensions(registries), new TitleScreen());
             });
-            while (!(mc.level != null && mc.player != null && mc.getSingleplayerServer() != null && McGui.screen() == null)) {
+            while (!(mc.level != null && mc.player != null && mc.getSingleplayerServer() != null && (McGui.screen() == null || System.getenv("BARELYQUESTING_FIRSTJOIN") != null))) {
                 Thread.sleep(500);
             }
             log("in the world");
@@ -110,6 +110,10 @@ public final class Tour {
             return;
         }
         log("connected=" + st.connected + " canEdit=" + st.canEdit + " chapters=" + st.book.chapters.size());
+        if (System.getenv("BARELYQUESTING_FIRSTJOIN") != null) {
+            Tour2.firstJoin();
+            return;
+        }
 
         if (System.getenv("BARELYQUESTING_INTEGRATIONS") != null) {
             for (String mod : System.getenv("BARELYQUESTING_INTEGRATIONS").split(",")) {

@@ -47,6 +47,7 @@ public final class QuestStore {
             JsonObject o = Json.parseObject(Files.readString(header, StandardCharsets.UTF_8));
             book.title = Json.str(o, "title", book.title);
             book.creativeEdits = Json.bool(o, "creative_edits", true);
+            book.readSettings(o);
             for (JsonElement e : Json.arr(o, "editors")) {
                 book.editors.add(e.getAsString().toLowerCase(java.util.Locale.ROOT));
             }

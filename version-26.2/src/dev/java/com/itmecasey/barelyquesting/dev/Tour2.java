@@ -110,6 +110,29 @@ final class Tour2 {
         }
     }
 
+    /** First join with give_book_on_join, open_book_on_join and editing off in book.json (BARELYQUESTING_FIRSTJOIN=1). */
+    static void firstJoin() throws Exception {
+        mc = Minecraft.getInstance();
+        check("first-join-book", () -> {
+            waitFor("book opened by the server", () -> screen() != null);
+            Thread.sleep(600);
+            Tour.shot("first_join_open");
+            int n = onServer(() -> new com.itmecasey.barelyquesting.compat.McPlayer(player()).countItems(ItemSpec.of("barelyquesting:quest_book")));
+            if (n != 1) throw new IllegalStateException("expected one Quest Book in the inventory, found " + n);
+        });
+        check("editing-off", () -> {
+            if (ClientState.get().canEdit) throw new IllegalStateException("the client still has canEdit");
+            if (Tour.pressed("Edit")) throw new IllegalStateException("the Edit button is on screen");
+            if (onServer(() -> ServerHooks.quests().canEdit(new com.itmecasey.barelyquesting.compat.McPlayer(player())))) {
+                throw new IllegalStateException("the server still lets the operator edit");
+            }
+            Tour.shot("editing_off");
+        });
+        if (!FAILED.isEmpty()) {
+            throw new IllegalStateException("failed checks: " + FAILED);
+        }
+    }
+
     /** Only the live-world task checks, so one launch stays inside the time limit. */
     static void tasksOnly() throws Exception {
         mc = Minecraft.getInstance();
@@ -302,6 +325,25 @@ final class Tour2 {
             Tour.command("gamemode creative @p");
         });
 
+        check("dialogs-close-and-fit", () -> {
+            openBook();
+            for (String dialog : new String[] {"Themes", "Team"}) {
+                Tour.press(dialog);
+                waitFor(dialog + " dialog", () -> screen().ui().hasModal());
+                Thread.sleep(300);
+                Tour.shot("dialog_" + dialog.toLowerCase());
+                Tour.press("x");
+                Thread.sleep(200);
+                if (screen().ui().hasModal()) throw new IllegalStateException("the x did not close " + dialog);
+            }
+            Tour.press("Themes");
+            waitFor("Themes dialog", () -> screen().ui().hasModal());
+            Tour.onClient(() -> realEscape());
+            Thread.sleep(300);
+            if (screen() == null || screen().ui().hasModal()) throw new IllegalStateException("Esc did not close the dialog (and leave the book open)");
+            Tour.onClient(() -> McGui.setScreen(null));
+        });
+
         check("teams", () -> {
             openBook();
             Tour.press("Team");
@@ -360,6 +402,29 @@ final class Tour2 {
 
         if (!FAILED.isEmpty()) {
             throw new IllegalStateException("failed checks: " + FAILED);
+        }
+    }
+
+    /** Esc through the screen's real key handler (the game's own key event, whatever this version numbers it). */
+    private static void realEscape() {
+        try {
+            int esc = Class.forName("com.mojang.blaze3d.platform.InputConstants").getField("KEY_ESCAPE").getInt(null);
+            Object s = McGui.screen();
+            for (Method m : s.getClass().getMethods()) {
+                if (!m.getName().equals("keyPressed")) continue;
+                if (m.getParameterCount() == 1) {
+                    Class<?> ev = m.getParameterTypes()[0];
+                    m.invoke(s, ev.getConstructor(int.class, int.class, int.class).newInstance(esc, 0, 0));
+                    return;
+                }
+                if (m.getParameterCount() == 3) {
+                    m.invoke(s, esc, 0, 0);
+                    return;
+                }
+            }
+            throw new IllegalStateException("no keyPressed");
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
         }
     }
 

@@ -2,7 +2,7 @@
 title: The in-game editor
 summary: Build and change the book without leaving the game.
 ---
-The **Edit** button appears for operators, players in creative mode (unless turned off) and names on the editor list (`/barelyquesting editor add <name>`). `/barelyquesting edit` opens the book in edit mode.
+The **Edit** button appears for operators, players in creative mode (unless turned off) and names on the editor list (`/barelyquesting editor add <name>`). `/barelyquesting edit` opens the book in edit mode. A pack that ships a finished questline can turn editing off for everyone; see [[settings]].
 
 - **Move** a quest by dragging its node; it snaps to the grid.
 - **Add** a quest with **+ Quest** or by right-clicking an empty spot. **+ Chapter** adds a chapter; click the selected chapter again to rename it, set its icon and group, reorder it or delete it.

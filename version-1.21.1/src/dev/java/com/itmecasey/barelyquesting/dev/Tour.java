@@ -63,7 +63,7 @@ public final class Tour {
                 mc.createWorldOpenFlows().createFreshLevel("bq_tour", settings, new WorldOptions(0L, normalWorld(), false),
                         registries -> registries.registryOrThrow(net.minecraft.core.registries.Registries.WORLD_PRESET).getHolderOrThrow((normalWorld() ? WorldPresets.NORMAL : WorldPresets.FLAT)).value().createWorldDimensions(), new TitleScreen());
             });
-            while (!(mc.level != null && mc.player != null && mc.getSingleplayerServer() != null && McGui.screen() == null)) {
+            while (!(mc.level != null && mc.player != null && mc.getSingleplayerServer() != null && (McGui.screen() == null || System.getenv("BARELYQUESTING_FIRSTJOIN") != null))) {
                 Thread.sleep(500);
             }
             log("in the world");
@@ -110,6 +110,10 @@ public final class Tour {
             return;
         }
         log("connected=" + st.connected + " canEdit=" + st.canEdit + " chapters=" + st.book.chapters.size());
+        if (System.getenv("BARELYQUESTING_FIRSTJOIN") != null) {
+            Tour2.firstJoin();
+            return;
+        }
 
 
         onClient(() -> ClientHooks.openBook(null));
