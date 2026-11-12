@@ -1,6 +1,6 @@
 # Project Status
 <!-- status-format: 1 -->
-Updated: 2026-11-11
+Updated: 2026-11-12
 Summary: Barely Questing 2026.11.5 (built locally; 2026.11.4 is released) builds for all ten Forge and NeoForge targets; every build passed unit tests, the headless server self test and a real-client tour, with deeper checks (editor, teams, tasks in a live world, viewers, ModJS 2026.11.31, KubeJS reload, real FTB Quests and Better Questing books) listed per step; open: CurseForge approval.
 Spend: none
 
@@ -54,3 +54,4 @@ Spend: none
 - [x] Pushed to GitHub (public repo ItMeCasey/BarelyQuesting, CI green, tag v2026.11.1, prerelease with ten jars) (w:3)
 - [x] CurseForge project 1794334 created; 2026.11.5 uploaded (ten files) and approved (2026-11-11) (w:2)
 - [x] Wiki deployed to itmecasey.com (live, pages return 200) (w:1)
+- [x] 2026.11.6 (Forge and NeoForge 26.3 only): mouse button fix for the 26.3 renumbering; compiled, not yet tried in a client (w:1)

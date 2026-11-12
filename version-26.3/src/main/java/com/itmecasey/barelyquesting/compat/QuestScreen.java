@@ -41,19 +41,31 @@ public final class QuestScreen extends Screen {
         // the book draws its own backdrop
     }
 
+    /** The shared book UI numbers buttons 0 left, 1 right, 2 middle; Minecraft 26.3 numbers them 1, 3 and 2. */
+    private static int uiButton(MouseButtonEvent event) {
+        int button = event.button();
+        if (button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT) {
+            return 0;
+        }
+        if (button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_RIGHT) {
+            return 1;
+        }
+        return button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_MIDDLE ? 2 : button;
+    }
+
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        return ui.mouseClicked((int) event.x(), (int) event.y(), event.button()) || super.mouseClicked(event, doubleClick);
+        return ui.mouseClicked((int) event.x(), (int) event.y(), uiButton(event)) || super.mouseClicked(event, doubleClick);
     }
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        return ui.mouseReleased((int) event.x(), (int) event.y(), event.button()) || super.mouseReleased(event);
+        return ui.mouseReleased((int) event.x(), (int) event.y(), uiButton(event)) || super.mouseReleased(event);
     }
 
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
-        return ui.mouseDragged((int) event.x(), (int) event.y(), event.button()) || super.mouseDragged(event, dx, dy);
+        return ui.mouseDragged((int) event.x(), (int) event.y(), uiButton(event)) || super.mouseDragged(event, dx, dy);
     }
 
     @Override

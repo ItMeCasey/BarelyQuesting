@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026.11.6 (Forge and NeoForge 26.3 only)
+
+- Fixed: clicks in the quest book on Minecraft 26.3 used the wrong buttons (left acted as right, right did nothing). Minecraft 26.3 renumbered the mouse buttons (left is now 1, middle 2, right 3), and the mod still compared clicks against 0 and 1. The other eight builds are unchanged and stay at 2026.11.5.
+
 ## 2026.11.5
 
 - Recipe viewers: BEI now opens from the quest panel on the 1.20.1 and 1.21.1 builds too (it was only wired on 26.x). Recipe and usage clicks and the Ctrl+J hover read were checked on real clients with JEI, REI, EMI and BEI on every 1.20.1 and 1.21.1 loader where that viewer exists.
