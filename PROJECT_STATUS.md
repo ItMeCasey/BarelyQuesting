@@ -1,6 +1,6 @@
 # Project Status
 <!-- status-format: 1 -->
-Updated: 2026-11-12
+Updated: 2026-11-13
 Summary: Barely Questing 2026.11.7 (committed locally, not pushed; 2026.11.5 is released and 2026.11.6 was the 26.3-only mouse fix) builds for all ten Forge and NeoForge targets; every build passed unit tests, the headless server self test and a real-client tour, with deeper checks (editor, teams, tasks in a live world, viewers, ModJS 2026.11.31, KubeJS reload, real FTB Quests and Better Questing books) listed per step; open: CurseForge approval.
 Spend: none
 
@@ -48,6 +48,7 @@ Spend: none
 ## CI, release and docs
 - [x] Scripting API guide, integration matrix, reproduction fixtures and reviewed viewer frames (docs/scripting.md, docs/integrations.md, docs/frames/) (w:2)
 - [x] build.yml, release.yml, CurseForge script, issue templates (pushed; CI green on build and release runs; CurseForge PROJECT_ID 1794334 and token set) (w:3)
+- [~] CI builds and releases only the versions that changed (plan job and tested path rules written and committed; not yet seen running on GitHub) (w:1)
 - [x] Branding, listing text, CurseForge description (branding/, curseforge/DESCRIPTION.md) (w:2)
 - [x] Wiki pages written (wiki/barelyquesting; deployed, matches the site copy) (w:3)
 - [x] README, CHANGELOG, compatibility and known-gaps docs (w:2)
