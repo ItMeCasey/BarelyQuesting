@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
 Updated: 2026-11-13
-Summary: Barely Questing 2026.11.7 (committed locally, not pushed; 2026.11.5 is released and 2026.11.6 was the 26.3-only mouse fix) builds for all ten Forge and NeoForge targets; every build passed unit tests, the headless server self test and a real-client tour, with deeper checks (editor, teams, tasks in a live world, viewers, ModJS 2026.11.31, KubeJS reload, real FTB Quests and Better Questing books) listed per step; open: CurseForge approval.
+Summary: Barely Questing 2026.11.8 (committed locally, not pushed; 2026.11.7 is released) builds for all ten Forge and NeoForge targets; every build passed unit tests, the headless server self test and a real-client tour, with deeper checks (editor, teams, tasks in a live world, viewers, ModJS 2026.11.31, KubeJS reload, real FTB Quests and Better Questing books) listed per step; open: CurseForge approval.
 Spend: none
 
 ## Foundation
@@ -60,4 +60,6 @@ Spend: none
 - [x] Issue #4: long lines in the Themes and Team dialogs wrap inside the box (Ui.wrap, Ui.paragraph; unit test on text bounds; frames on NeoForge 1.21.1 and 26.3) (w:1)
 - [x] Issue #2: `"editing": "off"` in book.json hides Edit and refuses edits for everyone, operators included; default on (unit tests; real client: operator has no Edit button and canEdit is false on NeoForge 1.21.1) (w:2)
 - [x] Issue #3: `give_book_on_join` and `open_book_on_join` in book.json, per-world first-join list, defaults off (unit tests; real client: first join got one Quest Book and the book opened on NeoForge 1.21.1) (w:2)
-- [ ] 2026.11.7 on the other eight builds: compiled, unit-tested logic is shared; real-client checks of the new dialog, editing and first-join checks ran on NeoForge 1.21.1 (and 26.3 for the keys and dialogs) only, CI and PM to build and release (w:1)
+- [x] No hints in the book (Casey, 2026-11-13): empty-state captions, Themes and Team helper lines, editor prompts and extra tooltip lines, the Import button, the starter book's "Press J" line removed on all ten builds; frames on NeoForge 1.21.1 and Forge 1.21.1 (w:2)
+- [x] ModJS bridge reviewed against ModJS 2026.11.38 (ExtraBindings.register / BindingProvider unchanged); client scripts no longer get the BarelyQuesting global, unit test added (w:1)
+- [ ] 2026.11.8 on the other eight builds: shared code compiles and unit tests pass; real-client checks ran on NeoForge 1.21.1 and Forge 1.21.1 only, CI builds the rest (w:1)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.11.8
+
+- Removed the hint text from the book: the empty-state captions, the Themes and Team dialog helper lines (the Team header now just says Solo), the editor's prompts and extra tooltip lines, the Import button that only printed a command, and the first-quest "Press J" line in the starter book. Names, values and short factual messages stay.
+- ModJS: client scripts no longer get the `BarelyQuesting` global (the quest engine runs on the server); startup and server scripts are unchanged.
+
 ## 2026.11.7
 
 - Fixed: the **x** in the corner of every dialog (Themes, Team, item picker and the rest) did nothing, because the dialog's click catcher sat on top of it. It now closes the dialog on every build. ([#1](https://github.com/ItMeCasey/BarelyQuesting/issues/1))

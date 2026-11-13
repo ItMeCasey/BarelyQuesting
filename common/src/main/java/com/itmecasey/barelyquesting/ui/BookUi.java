@@ -162,10 +162,7 @@ public final class BookUi {
         header(g, th);
         sidebar(g, th);
         if (chapter == null) {
-            g.centeredText("This book has no chapters yet.", mainX + mainW / 2, mainY + 40, th.color("text_muted"), 0);
-            if (st.canEdit) {
-                g.centeredText("Turn on Edit to add one.", mainX + mainW / 2, mainY + 54, th.color("text_muted"), 0);
-            }
+            g.centeredText("No chapters", mainX + mainW / 2, mainY + 40, th.color("text_muted"), 0);
         } else {
             int top = mainY;
             if (editing) {
@@ -305,13 +302,11 @@ public final class BookUi {
                 linkFrom = null;
             } else if (!selected.isEmpty()) {
                 linkFrom = selected;
-                say("Click the quest that should depend on the selected one", false);
             } else {
-                say("Select a quest first", true);
+                say("No quest selected", true);
             }
         });
         x += 68;
-        ui.button("Import...", x, y, 56, h, true, () -> say("Use /barelyquesting import <file or folder>", false));
     }
 
     private void statusLine(Gfx g, Theme th) {

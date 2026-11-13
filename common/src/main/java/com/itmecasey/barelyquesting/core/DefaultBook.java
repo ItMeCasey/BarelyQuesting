@@ -20,7 +20,7 @@ public final class DefaultBook {
         start.icon = ItemSpec.of("minecraft:oak_sapling");
         book.chapters.add(start);
 
-        Quest wood = quest(start, "wood", "Gather Wood", "Punch a tree and **collect 4 logs**.\n\nPress *J* any time to open this book.",
+        Quest wood = quest(start, "wood", "Gather Wood", "Punch a tree and **collect 4 logs**.",
                 "minecraft:oak_log", 0, 0);
         wood.tasks.add(Def.of("t0", "obtain").with("item", "4 #minecraft:logs"));
         wood.rewards.add(Def.of("r0", "item").with("item", "8 minecraft:apple"));
@@ -60,7 +60,7 @@ public final class DefaultBook {
         village.dependencies.add("forest");
         village.tasks.add(Def.of("t0", "structure").with("structure", "minecraft:village_plains"));
 
-        Quest done = quest(world, "check", "Take a Break", "Tick this off yourself when you are ready to continue.", "minecraft:clock", 2, 2);
+        Quest done = quest(world, "check", "Take a Break", "Take a break.", "minecraft:clock", 2, 2);
         done.tasks.add(Def.of("t0", "checkmark").with("text", "I took a break"));
         return book;
     }

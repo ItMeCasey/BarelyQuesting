@@ -107,7 +107,7 @@ final class QuestPanel {
         Gfx g = ui.g;
         Theme th = ui.th;
         QuestEngine.Status s = book.st.status(q);
-        String label = s == Status.COMPLETE ? "Complete: claim your rewards" : s == Status.CLAIMED ? "Complete" : s == Status.LOCKED ? "Locked"
+        String label = s == Status.COMPLETE ? "Complete" : s == Status.CLAIMED ? "Claimed" : s == Status.LOCKED ? "Locked"
                 : s == Status.IN_PROGRESS ? "In progress" : "Available";
         int color = s == Status.LOCKED ? th.color("danger") : s == Status.COMPLETE ? th.color("accent")
                 : s == Status.CLAIMED ? th.color("success") : th.color("text_muted");
@@ -119,7 +119,7 @@ final class QuestPanel {
             y += RichText.draw(g, lines, x, y, th.color("text"), ui.mx, ui.my, hover);
             url = hover[0];
             if (url != null) {
-                g.tooltip(List.of(url, "(link: click to copy)"), ui.mx, ui.my);
+                g.tooltip(List.of(url), ui.mx, ui.my);
                 final String u = url;
                 ui.zone(px, py, pw, ph, b -> g.setClipboard(u), null);
             }
@@ -143,10 +143,6 @@ final class QuestPanel {
         y = heading(g, th, "Tasks", x, y, w);
         for (Def t : q.tasks) {
             y = taskRow(q, t, x, y, w, s);
-        }
-        if (q.tasks.isEmpty()) {
-            g.text("Nothing to do here.", x, y, th.color("text_muted"), 0);
-            y += 12;
         }
         if (!q.rewards.isEmpty()) {
             y += 4;
@@ -246,7 +242,7 @@ final class QuestPanel {
         ItemSpec single = spec.withCount(Math.max(1, spec.count()));
         if (ui.hover(x, y, size, size)) {
             if (spec.isTag()) {
-                ui.g.tooltip(List.of("#" + spec.id(), "Any item with this tag"), ui.mx, ui.my);
+                ui.g.tooltip(List.of("#" + spec.id()), ui.mx, ui.my);
             } else {
                 ui.g.itemTooltip(single, ui.mx, ui.my);
             }
@@ -311,7 +307,7 @@ final class QuestPanel {
         g.item(q.icon, x + 2, y + 2, 16);
         ui.zone(x, y, 20, 20, b -> book.open(new Modals.ItemPick(q.icon, false, spec -> edit(c -> c.icon = spec.withCount(1)))), null);
         if (ui.hover(x, y, 20, 20)) {
-            g.tooltip(List.of("Icon", "Click to choose"), ui.mx, ui.my);
+            g.tooltip(List.of("Icon"), ui.mx, ui.my);
         }
         int bx = x + 26;
         g.text("X", bx, y + 6, th.color("text_muted"), 0);
@@ -366,7 +362,7 @@ final class QuestPanel {
 
         y += 4;
         ui.button("Delete quest", x, y, w, 16, true, () -> book.open(new Modals.Confirm("Delete \"" + q.title + "\"?",
-                "Other quests that need it lose that requirement.", () -> {
+                "", () -> {
                     book.st.edit(EditOps.removeQuest(q.id));
                     book.select("");
                 })));

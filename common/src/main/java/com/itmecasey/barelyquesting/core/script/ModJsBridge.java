@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /**
  * Gives ModJS scripts a global {@code BarelyQuesting} (the {@link QuestApi}). ModJS is optional, so everything here goes through
  * reflection: ModJS offers {@code ExtraBindings.register(BindingProvider)} and the provider's {@code install(type, cx, scope)} adds
- * globals to every script scope. Without ModJS nothing is loaded and nothing fails.
+ * globals to every server and startup script scope (client scripts get none, since the quest engine only runs on the server). Without ModJS nothing is loaded and nothing fails.
  *
  * <p>In scripts: {@code BarelyQuesting.registerTask("fly", ctx => ctx.y() > 200 ? ctx.target() : ctx.current())}.
  */
@@ -16,6 +16,11 @@ public final class ModJsBridge {
     private static final Logger LOG = Logger.getLogger("barelyquesting");
 
     private ModJsBridge() {
+    }
+
+    /** Whether ModJS's script type is the client one (its enum constant is named CLIENT). */
+    public static boolean clientScript(Object type) {
+        return type != null && "CLIENT".equals(String.valueOf(type));
     }
 
     /** Installs the binding when ModJS is on the classpath; returns whether it did. */
@@ -30,6 +35,9 @@ public final class ModJsBridge {
             Method put = scriptableObject.getMethod("putProperty", scriptable, String.class, Object.class);
             InvocationHandler handler = (proxy, method, args) -> {
                 if (method.getName().equals("install") && args != null && args.length == 3) {
+                    if (clientScript(args[0])) {
+                        return null; // the quest engine runs on the server; client scripts have nothing to call
+                    }
                     put.invoke(null, args[2], "BarelyQuesting", javaToJs.invoke(null, api, args[2]));
                     return null;
                 }

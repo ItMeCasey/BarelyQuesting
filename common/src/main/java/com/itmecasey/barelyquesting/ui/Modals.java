@@ -148,7 +148,7 @@ public final class Modals {
             this.label = label;
             this.allowCustom = allowCustom;
             this.choose = choose;
-            search.placeholder = allowCustom ? "Search or type an id (#tag works)" : "Search";
+            search.placeholder = "Search";
             search.focus();
         }
 
@@ -246,7 +246,6 @@ public final class Modals {
             count.numeric = true;
             count.maxLength = 5;
             count.set(String.valueOf(Math.max(1, current.count())));
-            tag.placeholder = "namespace:tag";
             tag.set(current.isTag() ? current.id() : "");
             tagMode = current.isTag();
         }
@@ -292,7 +291,6 @@ public final class Modals {
                 ed.click(g, ui.mx - x, ui.my - sy);
             }, null);
             if (tagMode) {
-                g.text("Matches every item in the tag.", x, sy + 22, th.color("text_muted"), 0);
                 ui.button("Use tag", x, sy + 38, w, 16, !tag.text().trim().isEmpty(), () -> {
                     b.closeModal();
                     choose.accept(new ItemSpec(tag.text().trim().replace("#", ""), amount(), true, null, false));
@@ -412,7 +410,7 @@ public final class Modals {
             JsonObject team = b.st.team;
             boolean solo = Json.bool(team, "solo", true);
             boolean owner = Json.str(team, "owner", "").equals(b.st.self.toString());
-            y = ui.paragraph(solo ? "You play solo. Create a team to share progress." : "Team: " + Json.str(team, "name", "?"), x, y, w, th.color("text"), Gfx.BOLD) + 3;
+            y = ui.paragraph(solo ? "Solo" : "Team: " + Json.str(team, "name", "?"), x, y, w, th.color("text"), Gfx.BOLD) + 3;
             for (JsonElement e : Json.arr(team, "members")) {
                 JsonObject m = e.getAsJsonObject();
                 String name = Json.str(m, "name", "?");
@@ -431,11 +429,11 @@ public final class Modals {
                 if (owner) {
                     ui.button("Invite player...", x, y, w, 16, true, () -> b.open(new Prompt("Player name", "", false, n -> b.st.teamAction("invite", n))));
                     y += 20;
-                    ui.button("Disband team", x, y, w, 16, true, () -> b.open(new Confirm("Disband the team?", "Members go back to their own progress.",
+                    ui.button("Disband team", x, y, w, 16, true, () -> b.open(new Confirm("Disband the team?", "",
                             () -> b.st.teamAction("disband", ""))));
                     y += 20;
                 }
-                ui.button("Leave team", x, y, w, 16, true, () -> b.open(new Confirm("Leave the team?", "You go back to your own progress.",
+                ui.button("Leave team", x, y, w, 16, true, () -> b.open(new Confirm("Leave the team?", "",
                         () -> b.st.teamAction("leave", ""))));
                 y += 22;
             }
@@ -487,7 +485,6 @@ public final class Modals {
                 b.st.saveSettings();
             });
             y += 19;
-            ui.paragraph("Add themes with a resource pack; F3+T reloads them.", x, y, w, th.color("text_muted"), 0);
         }
     }
 
@@ -553,7 +550,7 @@ public final class Modals {
             g.item(c.icon, x + w - 20, y + 10, 16);
             ui.zone(x + w - 22, y + 8, 20, 20, bt -> b.open(new ItemPick(c.icon, false, spec -> send(b, copy -> copy.icon = spec.withCount(1)))), null);
             y += 32;
-            g.text(ui.fit("Group (chapters with the same group stay together)", w, 0), x, y, th.color("text_muted"), 0);
+            g.text(ui.fit("Group", w, 0), x, y, th.color("text_muted"), 0);
             th.draw(g, "slot", x, y + 10, w, 16);
             group.draw(g, x, y + 10, w, 16, th.color("text"), th.color("text_muted"), ui.now);
             ui.zone(x, y + 10, w, 16, bt -> {

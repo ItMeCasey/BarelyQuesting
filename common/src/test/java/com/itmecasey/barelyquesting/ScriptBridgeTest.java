@@ -79,6 +79,14 @@ class ScriptBridgeTest {
     }
 
     @Test
+    void clientScriptsGetNoQuestGlobal() {
+        assertTrue(ModJsBridge.clientScript("CLIENT"));
+        assertFalse(ModJsBridge.clientScript("SERVER"));
+        assertFalse(ModJsBridge.clientScript("STARTUP"));
+        assertFalse(ModJsBridge.clientScript(null));
+    }
+
+    @Test
     void startupScriptsQueueUntilTheServerRuns() {
         assertNotNull(server.engine().book().quest("s1"));
         assertEquals("From Startup", server.engine().book().chapter("from_startup").title);

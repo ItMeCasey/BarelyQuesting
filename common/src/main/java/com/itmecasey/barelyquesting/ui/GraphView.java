@@ -203,9 +203,6 @@ final class GraphView {
                 t.add(have + "/" + need);
             }
         }
-        if (book.editing) {
-            t.add("Drag to move");
-        }
         return t;
     }
 

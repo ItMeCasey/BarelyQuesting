@@ -6,7 +6,7 @@ With ModJS or KubeJS installed, scripts get a `BarelyQuesting` object. Neither m
 
 ## ModJS
 
-The global `BarelyQuesting` is available in every script type. Quests made in startup scripts are queued until the world loads.
+The global `BarelyQuesting` is available in startup and server scripts; client scripts do not get it, since quests run on the server. Quests made in startup scripts are queued until the world loads.
 
 ## KubeJS
 

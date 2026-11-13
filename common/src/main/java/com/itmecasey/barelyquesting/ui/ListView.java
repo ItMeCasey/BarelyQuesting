@@ -82,7 +82,7 @@ final class ListView {
         ui.unclip();
         ui.scrollbar(x + w - 6, top, viewH, viewH, contentH, scroll);
         if (rows.isEmpty()) {
-            g.text(filter.isEmpty() ? "Nothing here yet." : "No quest matches.", x + 10, top + 8, th.color("text_muted"), 0);
+            g.text(filter.isEmpty() ? "" : "No quest matches.", x + 10, top + 8, th.color("text_muted"), 0);
         }
     }
 

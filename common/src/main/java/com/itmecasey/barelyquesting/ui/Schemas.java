@@ -39,7 +39,7 @@ public final class Schemas {
     public static List<Param> task(String type) {
         switch (type) {
             case "item":
-                return Arrays.asList(p("item", "Item", Kind.ITEM, "", "minecraft:stone"), p("consume", "Submit (take items)", Kind.BOOL, "", "false"));
+                return Arrays.asList(p("item", "Item", Kind.ITEM, "", "minecraft:stone"), p("consume", "Submit", Kind.BOOL, "", "false"));
             case "craft":
             case "obtain":
                 return Arrays.asList(p("item", "Item", Kind.ITEM, "", "minecraft:stone"));
@@ -79,7 +79,7 @@ public final class Schemas {
                 list.add(p("unit", "Unit", Kind.CHOICE, "points,levels", "points"));
                 break;
             case "command":
-                list.add(p("command", "Command ({player})", Kind.TEXT, "", "say Well done {player}"));
+                list.add(p("command", "Command", Kind.TEXT, "", "say Well done {player}"));
                 break;
             case "scripted":
                 list.add(p("name", "Script name", Kind.TEXT, "", ""));
@@ -98,7 +98,7 @@ public final class Schemas {
             case "quest":
                 return Arrays.asList(p("quest", "Quest", Kind.QUEST, "", ""));
             case "time":
-                return Arrays.asList(p("after", "Opens at (2026-12-01 or ISO)", Kind.TEXT, "", ""), p("before", "Closes at", Kind.TEXT, "", ""));
+                return Arrays.asList(p("after", "Opens at", Kind.TEXT, "", ""), p("before", "Closes at", Kind.TEXT, "", ""));
             case "script":
                 return Arrays.asList(p("name", "Script name", Kind.TEXT, "", ""));
             default:
