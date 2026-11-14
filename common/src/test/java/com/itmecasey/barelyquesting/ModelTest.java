@@ -39,7 +39,6 @@ class ModelTest {
     @Test
     void bookRoundTripsAndStoreWritesReadableFiles(@TempDir Path dir) throws IOException {
         Book book = DefaultBook.create();
-        book.editors.add("casey");
         QuestStore store = new QuestStore(dir);
         assertFalse(store.exists());
         store.save(book);
@@ -49,7 +48,6 @@ class ModelTest {
         assertTrue(text.contains("\n  \"title\""), "pretty printed");
         Book back = store.load();
         assertEquals(book.toJson(), back.toJson());
-        assertTrue(back.editors.contains("casey"));
         book.chapters.remove(1);
         store.save(book);
         assertFalse(Files.exists(dir.resolve("chapters/exploring.json")), "removed chapters disappear from disk");

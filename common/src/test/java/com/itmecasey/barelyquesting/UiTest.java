@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonObject;
 import com.itmecasey.barelyquesting.core.Json;
 import com.itmecasey.barelyquesting.core.model.ItemSpec;
+import com.itmecasey.barelyquesting.core.config.Settings;
 import com.itmecasey.barelyquesting.core.net.QuestServer;
 import com.itmecasey.barelyquesting.core.progress.PlayerView;
 import com.itmecasey.barelyquesting.core.progress.QuestEngine;
@@ -42,6 +43,7 @@ class UiTest {
 
     @BeforeEach
     void setUp() {
+        Settings.reset();
         alice.op = true;
         server = new QuestServer(dir.resolve("config"), dir.resolve("world"), (p, m) -> {
             if (p.equals(alice.id)) {
@@ -104,6 +106,7 @@ class UiTest {
     void tearDown() {
         ClientEnv.Holder.set(ClientEnv.NONE);
         st.reset();
+        Settings.reset();
     }
 
     void frame() {
@@ -299,7 +302,7 @@ class UiTest {
     @Test
     void editingOffHidesTheEditButtonEvenForOperators() {
         assertTrue(alice.op);
-        server.engine().book().editing = false;
+        Settings.set("editing", false);
         server.onJoin(alice);
         assertFalse(st.canEdit);
         frame();

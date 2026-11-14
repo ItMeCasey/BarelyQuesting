@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "title": "Quest Book",
+  "creative_edits": true,
+  "editing": "on",
+  "give_book_on_join": false,
+  "open_book_on_join": false,
+  "editors": [],
+  "chapters": [
+    "getting_started",
+    "exploring",
+    "tour_tasks"
+  ]
+}

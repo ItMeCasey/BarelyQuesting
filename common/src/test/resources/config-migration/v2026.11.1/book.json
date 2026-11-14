@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "title": "Quest Book",
+  "creative_edits": true,
+  "editors": [],
+  "chapters": [
+    "getting_started",
+    "exploring"
+  ]
+}

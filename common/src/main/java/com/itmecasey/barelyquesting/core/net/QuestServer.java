@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.itmecasey.barelyquesting.core.DefaultBook;
 import com.itmecasey.barelyquesting.core.Json;
+import com.itmecasey.barelyquesting.core.config.Settings;
 import com.itmecasey.barelyquesting.core.edit.EditOps;
 import com.itmecasey.barelyquesting.core.model.Book;
 import com.itmecasey.barelyquesting.core.model.Def;
@@ -121,11 +122,10 @@ public final class QuestServer implements QuestEngine.Listener {
     }
 
     public boolean canEdit(PlayerView p) {
-        Book b = engine.book();
-        if (!b.editing) {
+        if (!Settings.editing()) {
             return false;
         }
-        return p.isOperator() || b.editors.contains(p.name().toLowerCase(java.util.Locale.ROOT)) || (b.creativeEdits && p.isCreative());
+        return p.isOperator() || Settings.isEditor(p.name()) || (Settings.creativeEdits() && p.isCreative());
     }
 
     // ---- joining and syncing ----
@@ -136,13 +136,19 @@ public final class QuestServer implements QuestEngine.Listener {
         sendBook(p.uuid());
         sendTeamAndProgress(p);
         if (markWelcomed(p.uuid())) {
-            Book b = engine.book();
-            if (b.giveBookOnJoin) {
+            if (Settings.giveBookOnJoin()) {
                 p.giveItem(ItemSpec.of("barelyquesting:quest_book"));
             }
-            if (b.openBookOnJoin) {
+            if (Settings.openBookOnJoin()) {
                 open(p, null);
             }
+        }
+    }
+
+    /** Tells every online player their edit permission again (the settings file changed). */
+    public void refreshPermissions() {
+        for (PlayerView p : host.players()) {
+            sendInfo(p);
         }
     }
 

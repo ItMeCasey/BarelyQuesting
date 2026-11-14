@@ -1,7 +1,7 @@
 # Project Status
 <!-- status-format: 1 -->
-Updated: 2026-11-13
-Summary: Barely Questing 2026.11.8 (committed locally, not pushed; 2026.11.7 is released) builds for all ten Forge and NeoForge targets; every build passed unit tests, the headless server self test and a real-client tour, with deeper checks (editor, teams, tasks in a live world, viewers, ModJS 2026.11.31, KubeJS reload, real FTB Quests and Better Questing books) listed per step; open: CurseForge approval.
+Updated: 2026-11-14
+Summary: Barely Questing 2026.11.9 (committed locally, not pushed; 2026.11.8 is released) builds for all ten Forge and NeoForge targets; every build passed unit tests, the headless server self test and a real-client tour, with deeper checks (editor, teams, tasks in a live world, viewers, ModJS 2026.11.31, KubeJS reload, real FTB Quests and Better Questing books) listed per step; open: CurseForge approval.
 Spend: none
 
 ## Foundation
@@ -62,4 +62,5 @@ Spend: none
 - [x] Issue #3: `give_book_on_join` and `open_book_on_join` in book.json, per-world first-join list, defaults off (unit tests; real client: first join got one Quest Book and the book opened on NeoForge 1.21.1) (w:2)
 - [x] No hints in the book (Casey, 2026-11-13): empty-state captions, Themes and Team helper lines, editor prompts and extra tooltip lines, the Import button, the starter book's "Press J" line removed on all ten builds; frames on NeoForge 1.21.1 and Forge 1.21.1 (w:2)
 - [x] ModJS bridge reviewed against ModJS 2026.11.38 (ExtraBindings.register / BindingProvider unchanged); client scripts no longer get the BarelyQuesting global, unit test added (w:1)
-- [ ] 2026.11.8 on the other eight builds: shared code compiles and unit tests pass; real-client checks ran on NeoForge 1.21.1 and Forge 1.21.1 only, CI builds the rest (w:1)
+- [x] Settings in the loader's standard config files: barelyquesting-common.toml (barelyquesting-startup.toml on NeoForge 26.3) and barelyquesting-client.toml, built from one key list (ConfigKeys), NeoForge in-game config screen; old book.json and client.json settings migrated to the toml with a .back copy of the old file; 17 unit tests with real files from 2026.11.1 and 2026.11.7; real clients on NeoForge 1.21.1 and Forge 1.21.1 migrated the dev config and loaded the toml (w:4)
+- [ ] 2026.11.9 on the other eight builds: shared code and all nine loader config classes compile; real-client checks ran on NeoForge 1.21.1 and Forge 1.21.1 only; the NeoForge config screen was compiled but not opened; CI builds the rest (w:1)

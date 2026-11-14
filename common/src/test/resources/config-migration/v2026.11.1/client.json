@@ -1,0 +1,9 @@
+{
+  "view": "graph",
+  "chapter": "getting_started",
+  "hud": true,
+  "theme": "barelyquesting:default",
+  "pinned": [
+    "pickaxe"
+  ]
+}

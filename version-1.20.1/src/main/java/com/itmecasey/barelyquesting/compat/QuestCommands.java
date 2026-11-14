@@ -121,18 +121,13 @@ public final class QuestCommands {
     private static int editor(CommandContext<CommandSourceStack> ctx, boolean add) {
         QuestServer q = need(ctx);
         String name = StringArgumentType.getString(ctx, "name").toLowerCase(java.util.Locale.ROOT);
-        java.util.List<String> names = new java.util.ArrayList<>(q.engine().book().editors);
+        java.util.List<String> names = new java.util.ArrayList<>(com.itmecasey.barelyquesting.core.config.Settings.list("editors"));
+        names.removeIf(n -> n.equalsIgnoreCase(name));
         if (add) {
             names.add(name);
-        } else {
-            names.remove(name);
         }
-        com.google.gson.JsonObject op = new com.google.gson.JsonObject();
-        op.addProperty("op", "setBook");
-        com.google.gson.JsonArray arr = new com.google.gson.JsonArray();
-        names.forEach(arr::add);
-        op.add("editors", arr);
-        q.applyEdit(null, op, null);
+        com.itmecasey.barelyquesting.core.config.Settings.set("editors", names);
+        q.refreshPermissions();
         ok(ctx, (add ? "Added " : "Removed ") + name + (add ? " to" : " from") + " the editors");
         return 1;
     }

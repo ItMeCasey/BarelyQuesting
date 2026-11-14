@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.itmecasey.barelyquesting.core.Json;
+import com.itmecasey.barelyquesting.core.config.Settings;
 import com.itmecasey.barelyquesting.core.edit.EditOps;
 import com.itmecasey.barelyquesting.core.model.Def;
 import com.itmecasey.barelyquesting.core.model.Quest;
@@ -56,6 +57,7 @@ class ServerTest {
 
     @BeforeEach
     void setUp() {
+        Settings.reset();
         server = new QuestServer(dir.resolve("config"), dir.resolve("world"), (p, m) -> packets.add(m), host());
         server.start();
     }
@@ -200,7 +202,7 @@ class ServerTest {
     void firstJoinGivesAndOpensTheBookOnlyWhenAsked() {
         server.onJoin(alice);
         assertTrue(alice.given.isEmpty(), "off by default");
-        server.engine().book().giveBookOnJoin = true;
+        Settings.set("give_book_on_join", true);
         server.onJoin(bob);
         assertEquals(1, bob.given.size());
         assertTrue(bob.given.get(0).contains("barelyquesting:quest_book"));
@@ -208,11 +210,11 @@ class ServerTest {
         assertEquals(1, bob.given.size(), "a rejoin does not give it again");
         server = new QuestServer(dir.resolve("config"), dir.resolve("world"), (p, m) -> packets.add(m), host());
         server.start();
-        server.engine().book().giveBookOnJoin = true;
+        Settings.set("give_book_on_join", true);
         server.onJoin(bob);
         assertEquals(1, bob.given.size(), "a restart does not give it again");
         packets.clear();
-        server.engine().book().openBookOnJoin = true;
+        Settings.set("open_book_on_join", true);
         FakePlayer carol = new FakePlayer("carol");
         server.onJoin(carol);
         assertEquals(1, count(Msg.S_OPEN));
@@ -220,18 +222,22 @@ class ServerTest {
     }
 
     @Test
-    void bookSettingsRoundTripAndEditingOffRefusesEdits() throws IOException {
-        server.engine().book().editing = false;
-        server.engine().book().giveBookOnJoin = true;
-        server.store().save(server.engine().book());
-        String json = Files.readString(dir.resolve("config").resolve("book.json"));
-        assertTrue(json.contains("\"editing\": \"off\"") || json.contains("\"editing\":\"off\""), json);
+    void editingOffRefusesEditsAndTheBookFileKeepsItsLegacySettings() throws IOException {
+        Path book = dir.resolve("config").resolve("book.json");
+        String legacy = Files.readString(book).replace("\"title\"", "\"editing\": \"off\",\n  \"editors\": [\"casey\"],\n  \"title\"");
+        Files.writeString(book, legacy);
         server = new QuestServer(dir.resolve("config"), dir.resolve("world"), (p, m) -> packets.add(m), host());
         server.start();
-        assertFalse(server.engine().book().editing);
-        assertTrue(server.engine().book().giveBookOnJoin);
-        assertFalse(server.engine().book().openBookOnJoin);
+        Settings.set("editing", false);
         alice.op = true;
         assertFalse(server.canEdit(alice));
+        server.store().save(server.engine().book());
+        String json = Files.readString(book);
+        assertTrue(json.contains("\"editing\": \"off\""), "old settings stay in the file for a downgrade: " + json);
+        assertTrue(json.contains("\"casey\""), json);
+        Settings.set("editing", true);
+        assertTrue(server.canEdit(alice));
+        Settings.set("editors", java.util.List.of("Bob"));
+        assertTrue(Settings.isEditor("bob"));
     }
 }

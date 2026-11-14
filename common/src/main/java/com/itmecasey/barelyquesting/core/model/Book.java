@@ -19,16 +19,6 @@ public final class Book {
 
     public String title = "Quest Book";
     public final List<Chapter> chapters = new ArrayList<>();
-    /** Player names (lower case) allowed to edit besides operators and creative players. */
-    public final Set<String> editors = new HashSet<>();
-    /** Whether players in creative mode may edit. */
-    public boolean creativeEdits = true;
-    /** Whether editing is allowed at all; false hides the Edit button and refuses edits from everyone, operators included. */
-    public boolean editing = true;
-    /** Give each player a Quest Book the first time they join a world. */
-    public boolean giveBookOnJoin = false;
-    /** Open the book on each player's first join to a world. */
-    public boolean openBookOnJoin = false;
 
     public Chapter chapter(String id) {
         for (Chapter c : chapters) {
@@ -112,25 +102,11 @@ public final class Book {
         return sb.toString();
     }
 
-    /** Reads the whole-book switches (editing, first-join book) from book.json; anything missing keeps the default. */
-    public void readSettings(JsonObject o) {
-        editing = !"off".equalsIgnoreCase(Json.str(o, "editing", "on"));
-        giveBookOnJoin = Json.bool(o, "give_book_on_join", false);
-        openBookOnJoin = Json.bool(o, "open_book_on_join", false);
-    }
-
     /** Header (book.json): title, settings and the chapter order. */
     public JsonObject headerJson() {
         JsonObject o = new JsonObject();
         o.addProperty("format", FORMAT);
         o.addProperty("title", title);
-        o.addProperty("creative_edits", creativeEdits);
-        o.addProperty("editing", editing ? "on" : "off");
-        o.addProperty("give_book_on_join", giveBookOnJoin);
-        o.addProperty("open_book_on_join", openBookOnJoin);
-        JsonArray ed = new JsonArray();
-        editors.stream().sorted().forEach(ed::add);
-        o.add("editors", ed);
         JsonArray order = new JsonArray();
         for (Chapter c : chapters) {
             order.add(c.id);
@@ -153,11 +129,6 @@ public final class Book {
     public static Book fromJson(JsonObject o) {
         Book b = new Book();
         b.title = Json.str(o, "title", b.title);
-        b.creativeEdits = Json.bool(o, "creative_edits", true);
-        b.readSettings(o);
-        for (JsonElement e : Json.arr(o, "editors")) {
-            b.editors.add(e.getAsString().toLowerCase(java.util.Locale.ROOT));
-        }
         for (JsonElement e : Json.arr(o, "chapters")) {
             if (e.isJsonObject()) {
                 b.chapters.add(Chapter.fromJson(e.getAsJsonObject()));

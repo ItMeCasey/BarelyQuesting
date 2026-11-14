@@ -13,6 +13,7 @@ import com.itmecasey.barelyquesting.core.progress.PlayerView;
 import com.itmecasey.barelyquesting.core.progress.Progress;
 import com.itmecasey.barelyquesting.core.progress.QuestEngine;
 import com.itmecasey.barelyquesting.core.team.TeamManager;
+import com.itmecasey.barelyquesting.core.config.Settings;
 import com.itmecasey.barelyquesting.theme.ThemeManager;
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public final class ClientState {
     /** Quest the server asked the client to open the book on (empty string: just open), or null. */
     public volatile String pendingOpen;
 
-    // settings (client.json)
+    // settings (the client toml, through core.config.Settings)
     public String view = "graph";
     public String lastChapter = "";
     public boolean hud = true;
@@ -311,46 +312,30 @@ public final class ClientState {
         pendingSound = ThemeManager.current().sound(key);
     }
 
-    // ---- settings file ----
+    // ---- settings (the client toml) ----
 
-    private Path settingsFile() {
-        return ClientEnv.Holder.get().configDir().resolve("client.json");
-    }
-
+    /** Takes the client settings from {@link Settings}, which the loader fills from barelyquesting-client.toml. */
     public void loadSettings() {
-        try {
-            Path f = settingsFile();
-            if (Files.exists(f)) {
-                JsonObject o = Json.parseObject(Files.readString(f, StandardCharsets.UTF_8));
-                view = Json.str(o, "view", view);
-                lastChapter = Json.str(o, "chapter", lastChapter);
-                hud = Json.bool(o, "hud", true);
-                String theme = Json.str(o, "theme", "");
-                if (!theme.isEmpty()) {
-                    ThemeManager.select(theme);
-                }
-                pinned.clear();
-                Json.arr(o, "pinned").forEach(e -> pinned.add(e.getAsString()));
-            }
-        } catch (IOException | RuntimeException e) {
-            java.util.logging.Logger.getLogger("barelyquesting").warning("Could not read client.json: " + e);
+        view = Settings.str("view");
+        lastChapter = Settings.str("last_chapter");
+        hud = Settings.bool("hud_tracker");
+        String theme = Settings.str("theme");
+        if (!theme.isEmpty()) {
+            ThemeManager.select(theme);
         }
+        pinned.clear();
+        pinned.addAll(Settings.list("pinned_quests"));
     }
 
+    /** Writes the client settings back to the toml through {@link Settings}. */
     public void saveSettings() {
-        try {
-            JsonObject o = new JsonObject();
-            o.addProperty("view", view);
-            o.addProperty("chapter", lastChapter);
-            o.addProperty("hud", hud);
-            o.addProperty("theme", ThemeManager.selectedId());
-            com.google.gson.JsonArray pins = new com.google.gson.JsonArray();
-            pinned.forEach(pins::add);
-            o.add("pinned", pins);
-            Json.writeAtomic(settingsFile(), Json.pretty(o));
-        } catch (IOException e) {
-            java.util.logging.Logger.getLogger("barelyquesting").warning("Could not write client.json: " + e);
-        }
+        java.util.Map<String, Object> changes = new java.util.LinkedHashMap<>();
+        changes.put("view", view);
+        changes.put("last_chapter", lastChapter);
+        changes.put("hud_tracker", hud);
+        changes.put("theme", ThemeManager.selectedId());
+        changes.put("pinned_quests", new ArrayList<>(pinned));
+        Settings.set(changes);
     }
 
     public void togglePin(String questId) {

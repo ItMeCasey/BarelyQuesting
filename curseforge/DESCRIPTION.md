@@ -32,7 +32,7 @@ With ModJS or KubeJS installed, scripts get a `BarelyQuesting` object: create ch
 
 **Does it need FTB Quests or Better Questing?** No. It can import their books once and has no runtime link to them.
 
-**Can a pack lock the book?** Yes: `"editing": "off"` in `book.json` hides the Edit button and refuses edits for everyone. `give_book_on_join` and `open_book_on_join` give or open the book on a player's first join.
+**Can a pack lock the book?** Yes: `editing = false` in `config/barelyquesting-common.toml` hides the Edit button and refuses edits for everyone. `give_book_on_join` and `open_book_on_join` in the same file give or open the book on a player's first join.
 
 **Where are my quests?** `config/barelyquesting/book.json` and `config/barelyquesting/chapters/*.json`. Progress is saved with the world.
 

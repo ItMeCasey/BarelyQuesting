@@ -35,6 +35,9 @@ public final class QuestStore {
         return dir.resolve("chapters").resolve(id + ".json");
     }
 
+    /** Keys that earlier versions wrote into book.json as settings. */
+    private static final String[] LEGACY_SETTINGS = {"creative_edits", "editing", "editors", "give_book_on_join", "open_book_on_join"};
+
     public boolean exists() {
         return Files.exists(dir.resolve("book.json"));
     }
@@ -46,11 +49,6 @@ public final class QuestStore {
         if (Files.exists(header)) {
             JsonObject o = Json.parseObject(Files.readString(header, StandardCharsets.UTF_8));
             book.title = Json.str(o, "title", book.title);
-            book.creativeEdits = Json.bool(o, "creative_edits", true);
-            book.readSettings(o);
-            for (JsonElement e : Json.arr(o, "editors")) {
-                book.editors.add(e.getAsString().toLowerCase(java.util.Locale.ROOT));
-            }
             for (JsonElement e : Json.arr(o, "chapters")) {
                 order.add(e.getAsString());
             }
@@ -91,7 +89,23 @@ public final class QuestStore {
     }
 
     public void save(Book book) throws IOException {
-        Json.writeAtomic(dir.resolve("book.json"), Json.pretty(book.headerJson()));
+        JsonObject header = book.headerJson();
+        // Settings used to live in book.json. They moved to the loader's config files, but a user may still downgrade, so whatever
+        // those keys held in the file stays exactly as it was (nothing reads them any more).
+        Path existing = dir.resolve("book.json");
+        if (Files.exists(existing)) {
+            try {
+                JsonObject old = Json.parseObject(Files.readString(existing, StandardCharsets.UTF_8));
+                for (String key : LEGACY_SETTINGS) {
+                    if (old.has(key) && !header.has(key)) {
+                        header.add(key, old.get(key));
+                    }
+                }
+            } catch (IOException | RuntimeException e) {
+                // an unreadable old header has nothing to keep
+            }
+        }
+        Json.writeAtomic(existing, Json.pretty(header));
         Set<String> keep = new HashSet<>();
         for (Chapter c : book.chapters) {
             keep.add(c.id + ".json");

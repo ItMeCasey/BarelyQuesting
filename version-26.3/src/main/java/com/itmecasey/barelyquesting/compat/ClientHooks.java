@@ -32,6 +32,7 @@ public final class ClientHooks {
     public static void init() {
         ClientEnv.Holder.set(new McEnv());
         ClientState.get().loadSettings();
+        com.itmecasey.barelyquesting.core.config.Settings.onLoaded(() -> ClientState.get().loadSettings());
         DevHooks.clientInit();
     }
 

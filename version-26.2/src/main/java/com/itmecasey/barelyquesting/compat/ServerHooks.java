@@ -34,7 +34,18 @@ public final class ServerHooks {
         return quests != null;
     }
 
+    private static boolean listening;
+
     public static void started(MinecraftServer server) {
+        if (!listening) {
+            listening = true;
+            com.itmecasey.barelyquesting.core.config.Settings.onLoaded(() -> {
+                QuestServer q = quests;
+                if (q != null) {
+                    q.refreshPermissions();
+                }
+            });
+        }
         Mc.server = server;
         Mc.installMatchers();
         Path world = server.getWorldPath(LevelResource.ROOT).resolve("barelyquesting");

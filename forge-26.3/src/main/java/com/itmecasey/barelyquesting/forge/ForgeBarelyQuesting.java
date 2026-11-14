@@ -30,6 +30,7 @@ public final class ForgeBarelyQuesting {
     public ForgeBarelyQuesting(FMLJavaModLoadingContext context) {
         QuestItems.register(context.getModBusGroup());
         Mc.configDir = FMLPaths.CONFIGDIR.get();
+        QuestConfig.register(context);
         Bridges.install(FMLPaths.GAMEDIR.get());
         channel = ChannelBuilder.named(Mc.id("barelyquesting", "main"))
                 .networkProtocolVersion(1)

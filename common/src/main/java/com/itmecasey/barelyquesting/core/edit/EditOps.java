@@ -257,21 +257,8 @@ public final class EditOps {
         JsonObject inverse = new JsonObject();
         inverse.addProperty("op", "setBook");
         inverse.addProperty("title", book.title);
-        inverse.addProperty("creative_edits", book.creativeEdits);
-        JsonArray ed = new JsonArray();
-        book.editors.stream().sorted().forEach(ed::add);
-        inverse.add("editors", ed);
         if (op.has("title")) {
             book.title = Json.str(op, "title", book.title);
-        }
-        if (op.has("creative_edits")) {
-            book.creativeEdits = Json.bool(op, "creative_edits", true);
-        }
-        if (op.has("editors")) {
-            book.editors.clear();
-            for (JsonElement e : Json.arr(op, "editors")) {
-                book.editors.add(e.getAsString().toLowerCase(java.util.Locale.ROOT));
-            }
         }
         return Result.ok(inverse);
     }

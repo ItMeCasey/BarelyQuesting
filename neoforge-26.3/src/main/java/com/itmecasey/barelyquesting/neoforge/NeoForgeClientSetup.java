@@ -20,6 +20,12 @@ final class NeoForgeClientSetup {
     private NeoForgeClientSetup() {
     }
 
+    /** The in-game config screen (Mods, Barely Questing, Config) NeoForge builds from the specs. */
+    static void configScreen(net.neoforged.fml.ModContainer container) {
+        container.registerExtensionPoint(net.neoforged.neoforge.client.gui.IConfigScreenFactory.class,
+                net.neoforged.neoforge.client.gui.ConfigurationScreen::new);
+    }
+
     static void install(IEventBus modBus) {
         Mc.toServer = data -> ClientPacketDistributor.sendToServer(new QuestPayload(data));
         ClientHooks.init();

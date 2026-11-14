@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026.11.9
+
+- Settings are now standard config files: `config/barelyquesting-common.toml` (server and singleplayer: `editing`, `creative_edits`, `editors`, `give_book_on_join`, `open_book_on_join`) and `config/barelyquesting-client.toml` (`hud_tracker`, `theme`, `view`, `last_chapter`, `pinned_quests`), with a comment on every value. NeoForge shows them in the in-game config screen. On NeoForge 26.3 the common file is `barelyquesting-startup.toml`. The quest book itself (`book.json`, `chapters/*.json`) is unchanged data.
+- Migrating: the first start with a new toml missing copies every setting you had in `book.json` and `client.json` into it, then keeps the old file as `client.json.back` and `book.json.back` (first line says where and why it migrated, the rest is the original). `book.json` stays in place without the setting keys because it also holds the book's title and chapter order. Corrupt or partly readable files are left exactly as they are and unreadable values use their defaults. A backup is never overwritten.
+- `/barelyquesting editor add` and `remove` now change the `editors` list in the toml.
+
 ## 2026.11.8
 
 - Removed the hint text from the book: the empty-state captions, the Themes and Team dialog helper lines (the Team header now just says Solo), the editor's prompts and extra tooltip lines, the Import button that only printed a command, and the first-quest "Press J" line in the starter book. Names, values and short factual messages stay.
